@@ -1,0 +1,15 @@
+<svg viewBox="0 0 632 656" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Ben&Co Logo -->
+  <g id="logo">
+    <!-- Main geometric shape -->
+    <path d="M 210 122 L 320 122 L 432 275 L 320 428 L 210 428 Z" stroke="currentColor" stroke-width="8" fill="none"/>
+    <path d="M 320 122 L 432 275 L 320 428" stroke="currentColor" stroke-width="8" fill="none"/>
+    <path d="M 210 122 L 320 275 L 432 275" stroke="currentColor" stroke-width="8" fill="none"/>
+    
+    <!-- BEN&CO Text -->
+    <text x="150" y="550" font-family="Arial, sans-serif" font-size="72" font-weight="bold" letter-spacing="12" fill="currentColor">BEN&CO</text>
+    
+    <!-- Subtitle -->
+    <text x="90" y="600" font-family="Arial, sans-serif" font-size="20" letter-spacing="6" fill="currentColor">REAL ESTATE & CONSTRUCTION COMPANY</text>
+  </g>
+</svg>

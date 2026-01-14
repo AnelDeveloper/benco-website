@@ -1,0 +1,84 @@
+{
+  "nav": {
+    "home": "Početna",
+    "properties": "Nekretnine",
+    "about": "O nama",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "title": "Vaš partner za nekretnine i gradnju",
+    "subtitle": "Pronađite savršenu nekretninu u Sarajevu i okolini",
+    "cta": "Pregledaj nekretnine",
+    "contact": "Kontaktirajte nas"
+  },
+  "features": {
+    "title": "Zašto odabrati Ben&Co?",
+    "experience": {
+      "title": "Dugogodišnje iskustvo",
+      "description": "Vrhunska stručnost u industriji nekretnina i gradnje"
+    },
+    "quality": {
+      "title": "Kvalitet i povjerenje",
+      "description": "Posvećeni pružanju najboljih usluga našim klijentima"
+    },
+    "portfolio": {
+      "title": "Bogat portfolio",
+      "description": "Širok spektar ekskluzivnih nekretnina i projekata"
+    }
+  },
+  "properties": {
+    "title": "Istaknute nekretnine",
+    "subtitle": "Pregledajte naš odabir luksuznih vila, apartmana i stanova",
+    "viewAll": "Pogledaj sve",
+    "types": {
+      "villa": "Vila",
+      "apartment": "Apartman"
+    },
+    "locations": {
+      "sarajevo": "Sarajevo",
+      "jahorina": "Jahorina"
+    }
+  },
+  "about": {
+    "title": "O nama",
+    "subtitle": "Ben&Co - Vaš pouzdani partner",
+    "description": "Ben&Co je vodeća kompanija za nekretnine i gradnju u Sarajevu. Sa našim dugogodišnjim iskustvom i posvećenošću kvalitetu, pomažemo klijentima da pronađu savršenu nekretninu ili realizuju svoje građevinske projekte.",
+    "mission": "Naša misija je pružiti vrhunske usluge u industriji nekretnina i gradnje, uz najvisoke standarde kvaliteta i profesionalnosti.",
+    "highlights": {
+      "team": "Profesionalan tim stručnjaka",
+      "approach": "Individualan pristup svakom klijentu",
+      "transparency": "Transparentnost u poslovanju",
+      "portfolio": "Širok portfolio projekata"
+    },
+    "quote": "Naša vizija je da postanemo vodeća kompanija u regionu, prepoznatljiva po kvalitetu, profesionalizmu i inovativnim rješenjima."
+  },
+  "contact": {
+    "title": "Kontaktirajte nas",
+    "subtitle": "Spremni smo odgovoriti na sva vaša pitanja",
+    "phone": "Telefon",
+    "email": "Email",
+    "address": "Adresa",
+    "hours": "Radno vrijeme",
+    "form": {
+      "name": "Ime i prezime",
+      "email": "Email adresa",
+      "phone": "Broj telefona",
+      "message": "Poruka",
+      "submit": "Pošalji poruku",
+      "sending": "Šaljem...",
+      "success": "Hvala vam! Vaša poruka je uspješno poslata. Kontaktirat ćemo vas uskoro.",
+      "error": "Greška pri slanju poruke. Molimo pokušajte ponovo ili nas kontaktirajte direktno.",
+      "namePlaceholder": "Vaše ime",
+      "emailPlaceholder": "vas.email@primjer.ba",
+      "phonePlaceholder": "+387 62 123 456",
+      "messagePlaceholder": "Kako vam možemo pomoći?"
+    }
+  },
+  "footer": {
+    "description": "Vodeća kompanija za nekretnine i gradnju u Sarajevu",
+    "quickLinks": "Brzi linkovi",
+    "contactInfo": "Kontakt informacije",
+    "followUs": "Pratite nas",
+    "copyright": "© 2026 Ben&Co. Sva prava zadržana."
+  }
+}

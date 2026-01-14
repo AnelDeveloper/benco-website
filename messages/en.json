@@ -1,0 +1,84 @@
+{
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Your partner for real estate and construction",
+    "subtitle": "Find your perfect property in Sarajevo and surroundings",
+    "cta": "Browse properties",
+    "contact": "Contact us"
+  },
+  "features": {
+    "title": "Why choose Ben&Co?",
+    "experience": {
+      "title": "Years of experience",
+      "description": "Top expertise in real estate and construction industry"
+    },
+    "quality": {
+      "title": "Quality and trust",
+      "description": "Dedicated to providing the best service to our clients"
+    },
+    "portfolio": {
+      "title": "Rich portfolio",
+      "description": "Wide range of exclusive properties and projects"
+    }
+  },
+  "properties": {
+    "title": "Featured properties",
+    "subtitle": "Browse our selection of luxury villas, apartments and houses",
+    "viewAll": "View all",
+    "types": {
+      "villa": "Villa",
+      "apartment": "Apartment"
+    },
+    "locations": {
+      "sarajevo": "Sarajevo",
+      "jahorina": "Jahorina"
+    }
+  },
+  "about": {
+    "title": "About us",
+    "subtitle": "Ben&Co - Your trusted partner",
+    "description": "Ben&Co is a leading real estate and construction company in Sarajevo. With our years of experience and dedication to quality, we help clients find the perfect property or realize their construction projects.",
+    "mission": "Our mission is to provide top-notch services in the real estate and construction industry, with the highest standards of quality and professionalism.",
+    "highlights": {
+      "team": "Professional team of experts",
+      "approach": "Individual approach to each client",
+      "transparency": "Transparency in business",
+      "portfolio": "Wide portfolio of projects"
+    },
+    "quote": "Our vision is to become a leading company in the region, recognized for quality, professionalism and innovative solutions."
+  },
+  "contact": {
+    "title": "Contact us",
+    "subtitle": "We're ready to answer all your questions",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "hours": "Working hours",
+    "form": {
+      "name": "Full name",
+      "email": "Email address",
+      "phone": "Phone number",
+      "message": "Message",
+      "submit": "Send message",
+      "sending": "Sending...",
+      "success": "Thank you! Your message has been sent successfully. We will contact you soon.",
+      "error": "Error sending message. Please try again or contact us directly.",
+      "namePlaceholder": "Your name",
+      "emailPlaceholder": "your.email@example.com",
+      "phonePlaceholder": "+387 62 123 456",
+      "messagePlaceholder": "How can we help you?"
+    }
+  },
+  "footer": {
+    "description": "Leading real estate and construction company in Sarajevo",
+    "quickLinks": "Quick links",
+    "contactInfo": "Contact information",
+    "followUs": "Follow us",
+    "copyright": "© 2026 Ben&Co. All rights reserved."
+  }
+}
