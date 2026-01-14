@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization - samo kada je potreban
+const getResend = () => {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY nije postavljen. Molimo dodaj ga u environment variables.');
+  }
+  return new Resend(apiKey);
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,6 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Slanje emaila
+    const resend = getResend();
     const data = await resend.emails.send({
       from: 'Ben&Co Website <onboarding@resend.dev>', // U production koristi svoju domenu
       to: ['realestatebenco@gmail.com'], // Tvoj email
