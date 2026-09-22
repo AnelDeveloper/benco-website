@@ -52,5 +52,9 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/(bs|en)/:path*', '/admin/:path*', '/((?!_next|_vercel|.*\\..*).*)']
+  // `api` must be excluded: without it the next-intl middleware rewrites API
+  // routes into the locale tree and every request to them returns 404. This
+  // exclusion was missing from the original matcher, which is why
+  // POST /api/contact never reached its handler.
+  matcher: ['/', '/(bs|en)/:path*', '/admin/:path*', '/((?!api|_next|_vercel|.*\\..*).*)']
 };
