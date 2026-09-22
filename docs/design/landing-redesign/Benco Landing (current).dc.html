@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#0a0a0a;background:#fff;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+*{box-sizing:border-box}
+@keyframes fade-in{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(.8,0,1,1)}50%{transform:none;animation-timing-function:cubic-bezier(0,0,.2,1)}}
+</style>
+</helmet>
+<main data-screen-label="Landing (current)" style="min-height:100vh;font-family:Arial,Helvetica,sans-serif">
+
+<!-- Navbar -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:50;transition:all .3s;background:{{ navBg }};backdrop-filter:{{ navBlur }};box-shadow:{{ navShadow }}">
+  <div style="max-width:1280px;margin:0 auto;padding:0 32px">
+    <div style="display:flex;align-items:center;justify-content:space-between;height:80px">
+      <a href="#home" style="display:flex;align-items:center;gap:12px">
+        <div style="position:relative;width:{{ logoSize }}px;height:{{ logoSize }}px;transition:all .3s"><img src="public/benco-logo.jpg" alt="Ben&amp;Co" style="width:100%;height:100%;object-fit:contain"></div>
+        <span style="font-size:30px;font-weight:700;color:{{ navText }};transition:all .3s">BEN<span style="color:#f59e0b">&amp;</span>CO</span>
+      </a>
+      <div style="display:flex;align-items:center;gap:32px">
+        <sc-for list="{{ navLinks }}" as="l" hint-placeholder-count="5">
+          <a href="{{ l.href }}" style="font-weight:500;color:{{ navLink }};position:relative" style-hover="color:#d97706">{{ l.label }}</a>
+        </sc-for>
+        <button style="display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;font-weight:500;font-size:16px;cursor:pointer;transition:all .3s;background:{{ langBg }};color:{{ navText }};border:1px solid {{ langBorder }}" style-hover="background:#d97706;color:#fff;border-color:#d97706">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+          <span>EN</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section id="home" style="position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden">
+  <div style="position:absolute;inset:0;z-index:0">
+    <img src="public/images/properties/Vila%20sa%20jezerom%201.avif" alt="Luxury villa" style="width:100%;height:100%;object-fit:cover;display:block">
+    <div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.7),rgba(0,0,0,.5),rgba(0,0,0,.3))"></div>
+  </div>
+  <div style="position:relative;z-index:10;max-width:1280px;width:100%;margin:0 auto;padding:128px 32px">
+    <div style="max-width:768px">
+      <h1 style="font-size:clamp(48px,7vw,72px);font-weight:700;color:#fff;margin:0 0 24px;line-height:1.25;animation:fade-in .6s ease-out forwards">Your partner for real estate and construction</h1>
+      <p style="font-size:24px;line-height:32px;color:#e5e7eb;margin:0 0 32px;animation:fade-in .6s ease-out .2s forwards">Find your perfect property in Sarajevo and surroundings</p>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;animation:fade-in .6s ease-out .4s forwards">
+        <a href="#properties" style="display:inline-flex;align-items:center;justify-content:center;padding:16px 32px;background:#d97706;color:#fff;font-weight:600;border-radius:8px;transition:all .3s;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1)" style-hover="transform:scale(1.05)">Browse properties
+          <svg style="margin-left:8px" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+        <a href="#contact" style="display:inline-flex;align-items:center;justify-content:center;padding:16px 32px;background:rgba(255,255,255,.1);backdrop-filter:blur(12px);color:#fff;font-weight:600;border-radius:8px;border:2px solid rgba(255,255,255,.3);transition:all .3s" style-hover="background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.5)">
+          <svg style="margin-right:8px" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>Contact us</a>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:10;animation:bounce 1s infinite">
+    <div style="width:24px;height:40px;border:2px solid rgba(255,255,255,.5);border-radius:9999px;display:flex;align-items:flex-start;justify-content:center;padding:8px"><div style="width:4px;height:12px;background:#fff;border-radius:9999px"></div></div>
+  </div>
+</section>
+
+<!-- Features -->
+<section style="padding:80px 0;background:#f9fafb">
+  <div style="max-width:1280px;margin:0 auto;padding:0 32px">
+    <div style="text-align:center;margin-bottom:64px"><h2 style="font-size:clamp(36px,5vw,48px);font-weight:700;color:#111827;margin:0 0 16px;line-height:1.1">Why choose Ben&amp;Co?</h2></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px">
+      <sc-for list="{{ features }}" as="f" hint-placeholder-count="3">
+        <div style="background:#fff;padding:32px;border-radius:16px;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);transition:all .3s" style-hover="transform:translateY(-8px);box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1)">
+          <div style="width:64px;height:64px;background:{{ f.bg }};color:{{ f.color }};border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:24px">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" dangerouslySetInnerHTML="{{ f.icon }}"></svg>
+          </div>
+          <h3 style="font-size:24px;font-weight:700;color:#111827;margin:0 0 16px">{{ f.title }}</h3>
+          <p style="color:#4b5563;line-height:1.625;margin:0">{{ f.description }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- Properties -->
+<section id="properties" style="padding:80px 0;background:#fff">
+  <div style="max-width:1280px;margin:0 auto;padding:0 32px">
+    <div style="text-align:center;margin-bottom:64px">
+      <h2 style="font-size:clamp(36px,5vw,48px);font-weight:700;color:#111827;margin:0 0 16px;line-height:1.1">Featured properties</h2>
+      <p style="font-size:20px;color:#4b5563;max-width:768px;margin:0 auto">Browse our selection of luxury villas, apartments and houses</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:32px">
+      <sc-for list="{{ properties }}" as="p" hint-placeholder-count="4">
+        <a href="#properties" style="position:relative;display:block;overflow:hidden;border-radius:16px;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);transition:all .5s" style-hover="box-shadow:0 25px 50px -12px rgba(0,0,0,.25)">
+          <div style="position:relative;height:288px;overflow:hidden;background:#f3f4f6">
+            <img src="{{ p.image }}" alt="{{ p.title }}" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s">
+            <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,.25) 50%,transparent)"></div>
+          </div>
+          <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;color:#fff">
+            <h3 style="font-size:18px;font-weight:700;margin:0">{{ p.title }}</h3>
+            <p style="margin:4px 0 0;display:flex;align-items:center;gap:6px;font-size:14px;color:rgba(255,255,255,.85)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>{{ p.location }}</p>
+            <div style="margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:14px;color:rgba(255,255,255,.85)">
+              <span style="display:flex;align-items:center;gap:4px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"></path><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"></path><path d="M12 4v6"></path><path d="M2 18h20"></path></svg>{{ p.bedrooms }}</span>
+              <span style="display:flex;align-items:center;gap:4px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4 8 6"></path><path d="M17 19v2"></path><path d="M2 12h20"></path><path d="M7 19v2"></path><path d="M9 5 7.621 3.621A2.121 2.121 0 0 0 4 5v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"></path></svg>{{ p.bathrooms }}</span>
+              <span style="display:flex;align-items:center;gap:4px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-3"></path><path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>{{ p.area }} m²</span>
+            </div>
+            <p style="margin:12px 0 0;font-size:18px;font-weight:700;color:#fbbf24">{{ p.price }}</p>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+    <div style="text-align:center;margin-top:48px"><a href="#properties" style="display:inline-flex;align-items:center;padding:16px 32px;background:#d97706;color:#fff;font-weight:600;border-radius:8px;transition:all .3s;box-shadow:0 10px 15px -3px rgba(0,0,0,.1)" style-hover="background:#f59e0b;transform:scale(1.05)">View all</a></div>
+  </div>
+</section>
+
+<!-- InvestBuild -->
+<section id="invest-build" style="position:relative;background:#0f172a">
+  <div aria-hidden="true" style="pointer-events:none;position:absolute;inset:0;overflow:hidden"><div style="position:absolute;left:50%;top:0;height:600px;width:600px;transform:translateX(-50%);border-radius:9999px;background:rgba(245,158,11,.1);filter:blur(64px)"></div></div>
+  <div style="position:relative;max-width:1280px;margin:0 auto;padding:80px 32px 0;text-align:center">
+    <h2 style="font-size:clamp(36px,5vw,48px);font-weight:700;color:#fff;margin:0;line-height:1.1">We invest and build</h2>
+    <p style="max-width:672px;margin:12px auto 0;font-size:18px;color:#cbd5e1">Watch your future home take shape.</p>
+    <p style="margin:16px 0 0;display:inline-block;border-radius:9999px;border:1px solid rgba(245,158,11,.4);background:rgba(245,158,11,.1);padding:6px 16px;font-size:14px;font-weight:500;color:#fff">Stup residential building · Stup, Sarajevo</p>
+  </div>
+
+  <div ref="{{ sceneRef }}" style="position:relative;height:320vh">
+    <div style="position:sticky;top:0;display:flex;min-height:100vh;align-items:center">
+      <div style="margin:0 auto;display:grid;width:100%;max-width:1280px;gap:40px;padding:64px 32px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+        <div style="position:relative;margin:0 auto;width:100%;max-width:448px">
+          <svg viewBox="0 0 300 400" style="width:100%;filter:drop-shadow(0 25px 25px rgba(0,0,0,.15))" role="img" aria-label="Building under construction">
+            <defs>
+              <linearGradient id="facade" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#334155"></stop><stop offset="100%" stop-color="#1e293b"></stop></linearGradient>
+              <linearGradient id="ground" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#475569" stop-opacity="0.2"></stop><stop offset="50%" stop-color="#475569" stop-opacity="0.8"></stop><stop offset="100%" stop-color="#475569" stop-opacity="0.2"></stop></linearGradient>
+            </defs>
+            <g style="transform:translateY({{ craneY }}px)">
+              <rect x="246" y="120" width="5" height="220" fill="#64748b"></rect>
+              <rect x="188" y="118" width="70" height="5" fill="#f59e0b"></rect>
+              <line x1="196" y1="123" x2="196" y2="150" stroke="#64748b" stroke-width="2"></line>
+              <rect x="189" y="150" width="14" height="10" fill="#f59e0b"></rect>
+            </g>
+            <rect x="20" y="356" width="260" height="4" rx="2" fill="url(#ground)"></rect>
+            <rect x="62" y="332" width="176" height="26" rx="3" fill="#475569" style="opacity:{{ foundationOpacity }}"></rect>
+            <sc-for list="{{ floors }}" as="fl" hint-placeholder-count="5">
+              <g style="opacity:{{ fl.o }};transform:translateY({{ fl.y }}px)">
+                <rect x="68" y="{{ fl.top }}" width="164" height="42" rx="2" fill="url(#facade)"></rect>
+                <rect x="68" y="{{ fl.top }}" width="164" height="2" fill="#64748b" opacity="0.6"></rect>
+                <rect x="78" y="{{ fl.win }}" width="22" height="22" rx="2" fill="#fbbf24" style="opacity:{{ litWindows }}"></rect>
+                <rect x="116" y="{{ fl.win }}" width="22" height="22" rx="2" fill="#fbbf24" style="opacity:{{ litWindows }}"></rect>
+                <rect x="154" y="{{ fl.win }}" width="22" height="22" rx="2" fill="#fbbf24" style="opacity:{{ litWindows }}"></rect>
+                <rect x="192" y="{{ fl.win }}" width="22" height="22" rx="2" fill="#fbbf24" style="opacity:{{ litWindows }}"></rect>
+              </g>
+            </sc-for>
+            <g style="opacity:{{ roofOpacity }}">
+              <polygon points="62,102 150,66 238,102" fill="#0f172a"></polygon>
+              <rect x="140" y="52" width="4" height="18" fill="#f59e0b"></rect>
+              <polygon points="144,52 168,58 144,64" fill="#f59e0b"></polygon>
+            </g>
+            <g style="opacity:{{ signOpacity }}">
+              <rect x="104" y="336" width="92" height="19" rx="3" fill="#f59e0b"></rect>
+              <text x="150" y="350" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a">BEN&amp;CO</text>
+            </g>
+          </svg>
+          <p style="margin:8px 0 0;text-align:center;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8">Scroll to watch it rise</p>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center">
+          <div style="margin-bottom:24px">
+            <div style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;font-size:14px"><span style="color:#94a3b8">Construction progress</span><span style="font-size:24px;font-weight:700;color:#fbbf24">45%</span></div>
+            <div style="height:8px;overflow:hidden;border-radius:9999px;background:#334155"><div style="height:100%;width:{{ progressWidth }};border-radius:9999px;background:linear-gradient(to right,#f59e0b,#fcd34d);transition:width 1.2s ease-out"></div></div>
+          </div>
+          <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ stages }}" as="s" hint-placeholder-count="5">
+              <li style="display:flex;align-items:flex-start;gap:12px;border-radius:12px;border:1px solid {{ s.border }};background:{{ s.bg }};opacity:{{ s.opacity }};padding:16px;transition:all .5s;transform:translateX({{ s.tx }}px)">
+                <span style="margin-top:2px;display:flex;height:28px;width:28px;flex-shrink:0;align-items:center;justify-content:center;border-radius:9999px;background:{{ s.dotBg }};color:{{ s.dotColor }}">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" dangerouslySetInnerHTML="{{ s.icon }}"></svg>
+                </span>
+                <span><span style="display:block;font-weight:600;color:#fff">{{ s.title }}</span><span style="display:block;font-size:14px;color:#94a3b8">{{ s.date }}</span></span>
+              </li>
+            </sc-for>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:relative;max-width:1280px;margin:0 auto;padding:0 32px 80px">
+    <div ref="{{ countersRef }}" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;border-top:1px solid rgba(51,65,85,.6);padding-top:48px">
+      <sc-for list="{{ counters }}" as="c" hint-placeholder-count="4">
+        <div style="text-align:center">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 8px" dangerouslySetInnerHTML="{{ c.icon }}"></svg>
+          <p style="margin:0;font-size:36px;font-weight:700;color:#fff">{{ c.display }}</p>
+          <p style="margin:4px 0 0;font-size:14px;color:#94a3b8">{{ c.label }}</p>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top:48px;text-align:center"><a href="#invest-build" style="display:inline-flex;align-items:center;gap:8px;border-radius:8px;background:#d97706;padding:16px 32px;font-weight:600;color:#fff;box-shadow:0 10px 15px -3px rgba(0,0,0,.1);transition:all .3s" style-hover="transform:scale(1.05);background:#f59e0b">View projects →</a></div>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about" style="padding:80px 0;background:#f9fafb">
+  <div style="max-width:1280px;margin:0 auto;padding:0 32px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:48px;align-items:center">
+      <div style="position:relative;height:500px;border-radius:16px;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,.25)">
+        <img src="public/images/properties/Vila%20sa%20jezerom%204.avif" alt="Ben&amp;Co Office" style="width:100%;height:100%;object-fit:cover;display:block">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.3),transparent)"></div>
+      </div>
+      <div>
+        <h2 style="font-size:clamp(36px,5vw,48px);font-weight:700;color:#111827;margin:0 0 16px;line-height:1.1">About us</h2>
+        <h3 style="font-size:24px;color:#d97706;font-weight:600;margin:0 0 24px">Ben&amp;Co - Your trusted partner</h3>
+        <p style="font-size:18px;color:#374151;margin:0 0 24px;line-height:1.625">Ben&amp;Co is a leading real estate and construction company in Sarajevo. With our years of experience and dedication to quality, we help clients find the perfect property or realize their construction projects.</p>
+        <p style="font-size:18px;color:#374151;margin:0 0 32px;line-height:1.625">Our mission is to provide top-notch services in the real estate and construction industry, with the highest standards of quality and professionalism.</p>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <sc-for list="{{ highlights }}" as="h" hint-placeholder-count="4">
+            <div style="display:flex;align-items:flex-start;gap:12px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:4px"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg><span style="color:#374151;font-size:18px">{{ h }}</span></div>
+          </sc-for>
+        </div>
+        <div style="margin-top:40px;padding:24px;background:#fff;border-radius:12px;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);border-left:4px solid #d97706"><p style="margin:0;color:#374151;font-style:italic">"Our vision is to become a leading company in the region, recognized for quality, professionalism and innovative solutions."</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" style="padding:80px 0;background:#fff">
+  <div style="max-width:1280px;margin:0 auto;padding:0 32px">
+    <div style="text-align:center;margin-bottom:64px">
+      <h2 style="font-size:clamp(36px,5vw,48px);font-weight:700;color:#111827;margin:0 0 16px;line-height:1.1">Contact us</h2>
+      <p style="font-size:20px;color:#4b5563;margin:0">We're ready to answer all your questions</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:48px">
+      <div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin-bottom:32px">
+          <sc-for list="{{ contactInfo }}" as="ci" hint-placeholder-count="4">
+            <a href="{{ ci.href }}" style="display:block;transition:transform .3s" style-hover="transform:scale(1.05)">
+              <div style="background:#fff;padding:24px;border-radius:12px;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);height:100%">
+                <div style="width:48px;height:48px;background:{{ ci.bg }};color:{{ ci.color }};border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:16px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" dangerouslySetInnerHTML="{{ ci.icon }}"></svg></div>
+                <h3 style="font-weight:600;color:#111827;margin:0 0 8px;font-size:16px">{{ ci.label }}</h3>
+                <p style="color:#4b5563;font-size:14px;margin:0">{{ ci.value }}</p>
+              </div>
+            </a>
+          </sc-for>
+        </div>
+        <div style="border-radius:12px;overflow:hidden;box-shadow:0 10px 15px -3px rgba(0,0,0,.1);height:256px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:14px">Google Maps embed — Gajev Trg 4, Sarajevo</div>
+      </div>
+      <div style="background:#f9fafb;padding:32px;border-radius:16px;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1)">
+        <form style="display:flex;flex-direction:column;gap:24px">
+          <div><label style="display:block;font-size:14px;font-weight:600;color:#374151;margin-bottom:8px">Full name</label><input type="text" placeholder="Your name" style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid #d1d5db;outline:none;font-size:16px;font-family:inherit"></div>
+          <div><label style="display:block;font-size:14px;font-weight:600;color:#374151;margin-bottom:8px">Email address</label><input type="email" placeholder="your.email@example.com" style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid #d1d5db;outline:none;font-size:16px;font-family:inherit"></div>
+          <div><label style="display:block;font-size:14px;font-weight:600;color:#374151;margin-bottom:8px">Phone number</label><input type="tel" placeholder="+387 62 123 456" style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid #d1d5db;outline:none;font-size:16px;font-family:inherit"></div>
+          <div><label style="display:block;font-size:14px;font-weight:600;color:#374151;margin-bottom:8px">Message</label><textarea rows="5" placeholder="How can we help you?" style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid #d1d5db;outline:none;resize:none;font-size:16px;font-family:inherit"></textarea></div>
+          <button type="button" style="width:100%;background:#d97706;color:#fff;font-weight:600;padding:16px;border-radius:8px;border:0;font-size:16px;cursor:pointer;box-shadow:0 10px 15px -3px rgba(0,0,0,.1);transition:all .3s" style-hover="transform:scale(1.05)">Send message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer style="background:#111827;color:#fff">
+  <div style="max-width:1280px;margin:0 auto;padding:64px 32px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:48px;margin-bottom:48px">
+      <div style="grid-column:span 2">
+        <a href="#home" style="display:flex;align-items:center;margin-bottom:24px"><div style="position:relative;width:192px;height:64px"><img src="public/benco-logo.jpg" alt="Ben&amp;Co" style="width:100%;height:100%;object-fit:contain"></div></a>
+        <p style="color:#9ca3af;margin:0 0 24px;max-width:448px;line-height:1.625">Leading real estate and construction company in Sarajevo</p>
+        <div style="display:flex;gap:16px">
+          <sc-for list="{{ socials }}" as="s" hint-placeholder-count="3">
+            <a href="#" aria-label="{{ s.label }}" style="width:40px;height:40px;background:#1f2937;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .3s" style-hover="background:#d97706;transform:scale(1.1)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" dangerouslySetInnerHTML="{{ s.icon }}"></svg></a>
+          </sc-for>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-size:18px;font-weight:700;margin:0 0 24px">Quick links</h3>
+        <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px">
+          <li><a href="#home" style="color:#9ca3af" style-hover="color:#f59e0b">Home</a></li>
+          <li><a href="#properties" style="color:#9ca3af" style-hover="color:#f59e0b">Properties</a></li>
+          <li><a href="#about" style="color:#9ca3af" style-hover="color:#f59e0b">About</a></li>
+          <li><a href="#contact" style="color:#9ca3af" style-hover="color:#f59e0b">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="font-size:18px;font-weight:700;margin:0 0 24px">Contact information</h3>
+        <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px;color:#9ca3af">
+          <li style="display:flex;gap:12px;align-items:flex-start"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:4px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><span>+387 62 266 662</span></li>
+          <li style="display:flex;gap:12px;align-items:flex-start"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:4px"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg><span style="word-break:break-all">realestatebenco@gmail.com</span></li>
+          <li style="display:flex;gap:12px;align-items:flex-start"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:4px"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg><span>Gajev Trg 4, Sarajevo</span></li>
+        </ul>
+      </div>
+    </div>
+    <div style="border-top:1px solid #1f2937;padding-top:32px;text-align:center;color:#9ca3af;font-size:14px"><p style="margin:0">© 2026 Ben&amp;Co. All rights reserved.</p></div>
+  </div>
+</footer>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const I = {
+  award: '<circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>',
+  shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path>',
+  building: '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path>',
+  check: '<path d="M20 6 9 17l-5-5"></path>',
+  hardhat: '<path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"></path><path d="M14 6a6 6 0 0 1 6 6v3"></path><path d="M4 15v-3a6 6 0 0 1 6-6"></path><rect x="2" y="15" width="20" height="4" rx="1"></rect>',
+  ruler: '<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"></path><path d="m14.5 12.5 2-2"></path><path d="m11.5 9.5 2-2"></path><path d="m8.5 6.5 2-2"></path><path d="m17.5 15.5 2-2"></path>',
+  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>',
+  trending: '<path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path>',
+  phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>',
+  mail: '<rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>',
+  pin: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle>',
+  clock: '<circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path>',
+  facebook: '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>',
+  instagram: '<rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>',
+  linkedin: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle>',
+};
+const h = (s) => ({ __html: s });
+const map = (v, a, b, c, d) => { const t = Math.min(1, Math.max(0, (v - a) / (b - a))); return c + (d - c) * t; };
+const STAGES = [
+  { title: 'Land and permits', date: '1 Mar 2026', done: true },
+  { title: 'Foundation', date: '15 May 2026', done: true },
+  { title: 'Structure', date: '1 Oct 2026', done: false },
+  { title: 'Facade and windows', date: '1 Feb 2027', done: false },
+  { title: 'Interior and handover', date: '30 Jun 2027', done: false },
+];
+const COUNTERS = [
+  { icon: I.building, value: 12, label: 'Projects completed' },
+  { icon: I.ruler, value: 18500, label: 'm² delivered' },
+  { icon: I.users, value: 34, label: 'Happy investors' },
+  { icon: I.trending, value: 10, label: 'Years of experience' },
+];
+class Component extends DCLogic {
+  state = { scrolled: false, p: 0, countT: 0, barIn: false };
+  sceneRef = React.createRef();
+  countersRef = React.createRef();
+  componentDidMount() {
+    if (super.componentDidMount) super.componentDidMount();
+    this.onScroll = () => {
+      if (this.raf) return;
+      this.raf = setTimeout(() => {
+        this.raf = 0;
+        const scrolled = window.scrollY > 20;
+        let p = this.state.p;
+        const el = this.sceneRef.current;
+        if (el) {
+          const r = el.getBoundingClientRect();
+          p = Math.min(1, Math.max(0, -r.top / (r.height - window.innerHeight)));
+          if (r.top < window.innerHeight * 0.8 && !this.state.barIn) this.setState({ barIn: true });
+        }
+        const c = this.countersRef.current;
+        if (c && !this.counting && c.getBoundingClientRect().top < window.innerHeight - 80) this.startCount();
+        if (scrolled !== this.state.scrolled || p !== this.state.p) this.setState({ scrolled, p });
+      }, 16);
+    };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    this.onScroll();
+  }
+  componentWillUnmount() { if (super.componentWillUnmount) super.componentWillUnmount(); window.removeEventListener('scroll', this.onScroll); }
+  startCount() {
+    this.counting = true;
+    const start = performance.now();
+    const tick = () => {
+      const e = Math.min(1, (performance.now() - start) / 1400);
+      this.setState({ countT: e === 1 ? 1 : 1 - Math.pow(2, -10 * e) });
+      if (e < 1) setTimeout(tick, 16);
+    };
+    tick();
+  }
+  renderVals() {
+    const { scrolled, p, countT, barIn } = this.state;
+    const active = Math.min(4, Math.floor(p * 5));
+    const lit = map(p, 0.72, 0.92, 0.12, 1);
+    return {
+      sceneRef: this.sceneRef, countersRef: this.countersRef,
+      navBg: scrolled ? 'rgba(255,255,255,.95)' : 'transparent',
+      navBlur: scrolled ? 'blur(12px)' : 'none',
+      navShadow: scrolled ? '0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1)' : 'none',
+      navText: scrolled ? '#000' : '#fff',
+      navLink: scrolled ? '#374151' : '#fff',
+      logoSize: scrolled ? 40 : 48,
+      langBg: scrolled ? '#f3f4f6' : 'rgba(255,255,255,.2)',
+      langBorder: scrolled ? 'transparent' : 'rgba(255,255,255,.3)',
+      navLinks: [{ href: '#home', label: 'Home' }, { href: '#properties', label: 'Properties' }, { href: '#invest-build', label: 'Invest' }, { href: '#about', label: 'About' }, { href: '#contact', label: 'Contact' }],
+      features: [
+        { icon: h(I.award), title: 'Years of experience', description: 'Top expertise in real estate and construction industry', color: '#2563eb', bg: '#eff6ff' },
+        { icon: h(I.shield), title: 'Quality and trust', description: 'Dedicated to providing the best service to our clients', color: '#16a34a', bg: '#f0fdf4' },
+        { icon: h(I.building), title: 'Rich portfolio', description: 'Wide range of exclusive properties and projects', color: '#d97706', bg: 'transparent' },
+      ],
+      properties: [
+        { title: 'Lakeside villa', location: 'Sarajevo', bedrooms: 4, bathrooms: 3, area: 320, price: '450,000 BAM', image: 'public/images/properties/Vila%20sa%20jezerom%201.avif' },
+        { title: 'Villa with pool', location: 'Sarajevo', bedrooms: 5, bathrooms: 4, area: 380, price: '450 BAM / night', image: 'public/images/properties/Villa%20sa%20bazenom%201.avif' },
+        { title: 'Dacha apartment', location: 'Sarajevo', bedrooms: 2, bathrooms: 1, area: 65, price: '180 BAM / night', image: 'public/images/properties/Apartman%20Dacha%201.jpeg' },
+        { title: 'Jahorina apartment', location: 'Jahorina', bedrooms: 2, bathrooms: 1, area: 58, price: '220 BAM / night', image: 'public/images/properties/Jahorina%20apartman1.avif' },
+      ],
+      craneY: map(p, 0, 0.8, 40, -150),
+      foundationOpacity: map(p, 0.05, 0.16, 0, 1),
+      roofOpacity: map(p, 0.78, 0.88, 0, 1),
+      signOpacity: map(p, 0.88, 0.97, 0, 1),
+      litWindows: lit,
+      floors: [0, 1, 2, 3, 4].map((i) => { const s = 0.18 + i * 0.11, top = 330 - (i + 1) * 46; return { top, win: top + 12, o: map(p, s, s + 0.1, 0, 1), y: map(p, s, s + 0.1, 26, 0) }; }),
+      progressWidth: barIn ? '45%' : '0%',
+      stages: STAGES.map((s, i) => { const r = i <= active; return { ...s, icon: h(s.done ? I.check : I.hardhat), border: r ? 'rgba(245,158,11,.4)' : 'rgba(51,65,85,.6)', bg: r ? 'rgba(30,41,59,.8)' : 'rgba(30,41,59,.3)', opacity: r ? 1 : 0.4, tx: r ? 0 : 12, dotBg: s.done ? '#22c55e' : r ? '#f59e0b' : '#334155', dotColor: s.done ? '#fff' : r ? '#0f172a' : '#64748b' }; }),
+      counters: COUNTERS.map((c) => ({ ...c, icon: h(c.icon), display: Math.round(c.value * countT).toLocaleString('en-US') })),
+      highlights: ['Professional team of experts', 'Individual approach to each client', 'Transparency in business', 'Wide portfolio of projects'],
+      contactInfo: [
+        { icon: h(I.phone), label: 'Phone', value: '+387 62 266 662', href: 'tel:+38762266662', color: '#2563eb', bg: '#eff6ff' },
+        { icon: h(I.mail), label: 'Email', value: 'realestatebenco@gmail.com', href: 'mailto:realestatebenco@gmail.com', color: '#16a34a', bg: '#f0fdf4' },
+        { icon: h(I.pin), label: 'Address', value: 'Gajev Trg 4, Sarajevo', href: 'https://maps.google.com/?q=Gajev+Trg+4+Sarajevo', color: '#dc2626', bg: '#fef2f2' },
+        { icon: h(I.clock), label: 'Working hours', value: 'Pon - Sub 09:00 - 17:00', href: '#contact', color: '#9333ea', bg: '#faf5ff' },
+      ],
+      socials: [{ icon: h(I.facebook), label: 'Facebook' }, { icon: h(I.instagram), label: 'Instagram' }, { icon: h(I.linkedin), label: 'LinkedIn' }],
+    };
+  }
+}
+</script>
+</body>
+</html>

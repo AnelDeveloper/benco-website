@@ -35,3 +35,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Design handoff: prototypes and spec are tracked, but their public/ folder is
+# a byte-for-byte copy of the repo's own public/ — kept locally so the .dc.html
+# prototypes open with images, not committed.
+docs/design/landing-redesign/public/

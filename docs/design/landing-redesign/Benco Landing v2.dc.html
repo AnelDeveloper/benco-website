@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Geist,system-ui,sans-serif;color:#1a1f2b;background:#f7f4ee;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+*{box-sizing:border-box}
+button,input,select,textarea{font-family:inherit}
+input::placeholder,textarea::placeholder{color:#9aa1ad}
+@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes twinkle{0%,100%{opacity:.35}50%{opacity:1}}
+</style>
+</helmet>
+<main data-screen-label="Landing v2" style="min-height:100vh;font-family:Geist,system-ui,sans-serif;background:#f7f4ee;color:#1a1f2b;overflow-x:clip">
+
+<!-- NAV -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:60;transition:background .4s,box-shadow .4s;background:{{ navBg }};backdrop-filter:blur(14px);border-bottom:1px solid {{ navLine }}">
+  <div style="max-width:1240px;margin:0 auto;padding:0 24px;height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+    <a href="#top" style="display:flex;align-items:center;gap:12px">
+      <img src="public/benco-logo.jpg" alt="Ben&amp;Co" style="width:40px;height:40px;object-fit:cover;border-radius:8px">
+      <span style="font-size:20px;font-weight:600;letter-spacing:.14em;color:#fff">BEN<span style="color:#f2b544">&amp;</span>CO</span>
+    </a>
+    <div style="display:{{ navLinksDisplay }};align-items:center;gap:28px;font-size:14px;font-weight:500;color:rgba(255,255,255,.78)">
+      <a href="#stays" style-hover="color:#fff">Stays</a>
+      <a href="#invest" style-hover="color:#fff">Invest</a>
+      <a href="#tours" style-hover="color:#fff">Car tours</a>
+      <a href="#about" style-hover="color:#fff">About</a>
+      <a href="#contact" style-hover="color:#fff">Contact</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button style="height:38px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:transparent;color:#fff;font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.06em" style-hover="background:rgba(255,255,255,.1)">EN</button>
+      <button onClick="{{ openStay }}" style="height:38px;padding:0 18px;border-radius:999px;border:0;background:#f2b544;color:#1a1200;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#ffc95c">Book</button>
+      <button onClick="{{ toggleMenu }}" aria-label="Menu" style="display:{{ burgerDisplay }};width:38px;height:38px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:transparent;color:#fff;cursor:pointer;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" dangerouslySetInnerHTML="{{ burgerIcon }}"></svg></button>
+    </div>
+  </div>
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="background:rgba(11,18,32,.96);border-top:1px solid rgba(255,255,255,.08);padding:12px 24px 20px;display:flex;flex-direction:column;gap:4px">
+      <sc-for list="{{ menuLinks }}" as="l" hint-placeholder-count="5"><a href="{{ l.href }}" onClick="{{ toggleMenu }}" style="padding:14px 4px;font-size:18px;font-weight:500;color:#fff;border-bottom:1px solid rgba(255,255,255,.06)">{{ l.label }}</a></sc-for>
+    </div>
+  </sc-if>
+</nav>
+
+<!-- HERO -->
+<section id="top" style="position:relative;min-height:100vh;display:flex;align-items:flex-end;overflow:hidden;background:#0b1220">
+  <img src="public/images/properties/Vila%20sa%20jezerom%201.avif" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale({{ heroScale }});transition:transform .1s linear">
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,18,32,.55) 0%,rgba(11,18,32,.15) 40%,rgba(11,18,32,.85) 100%)"></div>
+  <div style="position:relative;z-index:2;max-width:1240px;width:100%;margin:0 auto;padding:140px 24px 56px">
+    <p style="margin:0 0 18px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#f2b544;font-weight:600;animation:rise .8s ease-out both">Sarajevo · Jahorina · Herzegovina</p>
+    <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(46px,7.2vw,96px);line-height:.98;letter-spacing:-.02em;color:#fff;max-width:14ch;text-wrap:balance;animation:rise .9s ease-out .1s both">Homes to stay in. <em style="color:#f2b544">Buildings</em> to believe in.</h1>
+    <p style="margin:22px 0 0;max-width:520px;font-size:18px;line-height:1.55;color:rgba(255,255,255,.8);animation:rise .9s ease-out .2s both">Book a villa or apartment, invest in a building while it rises, or let us drive you through Bosnia — all from one place.</p>
+
+    <!-- Booking bar -->
+    <div style="margin-top:40px;background:rgba(255,255,255,.96);border-radius:20px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);overflow:hidden;animation:rise .9s ease-out .35s both">
+      <div style="display:flex;gap:4px;padding:8px 8px 0">
+        <sc-for list="{{ heroTabs }}" as="t" hint-placeholder-count="3">
+          <button onClick="{{ t.select }}" style="flex:1;height:44px;border:0;border-radius:12px;background:{{ t.bg }};color:{{ t.color }};font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .25s"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" dangerouslySetInnerHTML="{{ t.icon }}"></svg>{{ t.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;padding:14px 12px 12px;align-items:end">
+        <sc-for list="{{ heroFields }}" as="f" hint-placeholder-count="3">
+          <label style="display:flex;flex-direction:column;gap:6px;padding:10px 14px;border-radius:12px;background:#f3efe7;min-width:0">
+            <span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b7280;font-weight:600">{{ f.label }}</span>
+            <select style="border:0;background:transparent;font-size:15px;font-weight:500;color:#1a1f2b;outline:none;padding:0;cursor:pointer;min-width:0">
+              <sc-for list="{{ f.options }}" as="opt" hint-placeholder-count="2"><option>{{ opt.label }}</option></sc-for>
+            </select>
+          </label>
+        </sc-for>
+        <button onClick="{{ heroSubmit }}" style="height:62px;border-radius:12px;border:0;background:#1a1f2b;color:#fff;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .25s" style-hover="background:#d97706">{{ heroCta }}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<section ref="{{ countersRef }}" style="background:#0b1220;border-top:1px solid rgba(255,255,255,.06)">
+  <div style="max-width:1240px;margin:0 auto;padding:36px 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px">
+    <sc-for list="{{ counters }}" as="c" hint-placeholder-count="4">
+      <div style="display:flex;align-items:baseline;gap:12px;border-left:1px solid rgba(255,255,255,.12);padding-left:18px">
+        <span style="font-family:'Instrument Serif',Georgia,serif;font-size:44px;line-height:1;color:#fff;font-variant-numeric:tabular-nums">{{ c.display }}<span style="color:#f2b544">{{ c.suffix }}</span></span>
+        <span style="font-size:13px;color:#a3adc2;line-height:1.3">{{ c.label }}</span>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- STAYS -->
+<section id="stays" style="padding:112px 0 96px;background:#f7f4ee">
+  <div style="max-width:1240px;margin:0 auto;padding:0 24px">
+    <div data-reveal="1" style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:40px;opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease">
+      <div>
+        <p style="margin:0 0 12px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#b4791b;font-weight:600">Stays &amp; homes</p>
+        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(36px,4.6vw,60px);line-height:1.02;letter-spacing:-.02em;color:#1a1f2b">Places worth <em>waking up in</em></h2>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ stayFilters }}" as="f" hint-placeholder-count="3">
+          <button onClick="{{ f.select }}" style="height:38px;padding:0 16px;border-radius:999px;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.color }};font-size:13px;font-weight:600;cursor:pointer;transition:all .2s">{{ f.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:24px">
+      <sc-for list="{{ properties }}" as="p" hint-placeholder-count="4">
+        <article data-reveal="1" style="position:relative;background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,.04),0 20px 40px -24px rgba(26,31,43,.25);display:flex;flex-direction:column;opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease,box-shadow .3s" style-hover="box-shadow:0 1px 0 rgba(0,0,0,.04),0 30px 50px -22px rgba(26,31,43,.4)">
+          <a href="#stays" style="position:relative;display:block;aspect-ratio:4/3;overflow:hidden;background:#e9e3d8">
+            <img src="{{ p.image }}" alt="{{ p.title }}" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform .9s cubic-bezier(.2,.7,.2,1)" style-hover="transform:scale(1.06)">
+            <span style="position:absolute;top:14px;left:14px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.92);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#1a1f2b">{{ p.tag }}</span>
+          </a>
+          <div style="padding:18px 20px 20px;display:flex;flex-direction:column;gap:12px;flex:1">
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+              <div><h3 style="margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em">{{ p.title }}</h3><p style="margin:4px 0 0;font-size:13px;color:#6b7280;display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle></svg>{{ p.location }}</p></div>
+              <div style="text-align:right;flex-shrink:0"><p style="margin:0;font-size:18px;font-weight:600;color:#1a1f2b;font-variant-numeric:tabular-nums">{{ p.price }}</p><p style="margin:2px 0 0;font-size:12px;color:#6b7280">{{ p.priceNote }}</p></div>
+            </div>
+            <div style="display:flex;gap:14px;font-size:13px;color:#4b5563">
+              <span style="display:flex;align-items:center;gap:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"></path><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"></path><path d="M12 4v6"></path><path d="M2 18h20"></path></svg>{{ p.bedrooms }} bd</span>
+              <span style="display:flex;align-items:center;gap:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4 8 6"></path><path d="M17 19v2"></path><path d="M2 12h20"></path><path d="M7 19v2"></path><path d="M9 5 7.621 3.621A2.121 2.121 0 0 0 4 5v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"></path></svg>{{ p.bathrooms }} ba</span>
+              <span style="display:flex;align-items:center;gap:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-3"></path><path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>{{ p.area }} m²</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:auto;padding-top:6px">
+              <button onClick="{{ p.book }}" style="flex:1;height:42px;border-radius:10px;border:0;background:#1a1f2b;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s" style-hover="background:#d97706">{{ p.cta }}</button>
+              <a href="#stays" style="height:42px;padding:0 14px;border-radius:10px;border:1px solid #e2dccf;display:flex;align-items:center;font-size:14px;font-weight:500;color:#1a1f2b" style-hover="background:#f3efe7">Details</a>
+            </div>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- INVEST & BUILD -->
+<section id="invest" style="position:relative;background:#0b1220;color:#fff">
+  <div style="max-width:1240px;margin:0 auto;padding:96px 24px 0">
+    <div data-reveal="1" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:24px;align-items:end;opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease">
+      <div>
+        <p style="margin:0 0 12px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#f2b544;font-weight:600">We invest and build</p>
+        <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(36px,4.6vw,60px);line-height:1.02;letter-spacing:-.02em">Watch your future home <em>take shape</em></h2>
+      </div>
+      <p style="margin:0;font-size:16px;line-height:1.6;color:#a3adc2;max-width:460px">Stup residential building · 24 units · Stup, Sarajevo. Buy an apartment before it's finished at today's price, or fund the build and earn a return. Scroll — the building rises with you.</p>
+    </div>
+  </div>
+
+  <div ref="{{ sceneRef }}" style="position:relative;height:{{ sceneHeight }}">
+    <div style="position:sticky;top:0;min-height:100vh;display:flex;align-items:center">
+      <div style="width:100%;max-width:1240px;margin:0 auto;padding:{{ scenePad }};display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:{{ sceneGap }};align-items:center">
+
+        <!-- SCENE -->
+        <div style="position:relative;border-radius:28px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.7),inset 0 0 0 1px rgba(255,255,255,.08);background:#0b1220;max-height:{{ sceneMaxH }};aspect-ratio:640/520;margin:0 auto;width:100%;max-width:calc({{ sceneMaxH }} * 640 / 520)">
+          <svg viewBox="0 0 640 520" style="display:block;width:100%;height:100%" role="img" aria-label="Isometric building constructing itself as you scroll">
+            <defs>
+              <linearGradient id="v2sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="{{ sky.top }}"></stop><stop offset="100%" stop-color="{{ sky.bottom }}"></stop></linearGradient>
+              <radialGradient id="v2glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffd27a" stop-opacity=".9"></stop><stop offset="100%" stop-color="#ffd27a" stop-opacity="0"></stop></radialGradient>
+              <linearGradient id="v2ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="{{ sky.ground }}"></stop><stop offset="100%" stop-color="{{ sky.groundDeep }}"></stop></linearGradient>
+            </defs>
+            <rect width="640" height="520" fill="url(#v2sky)"></rect>
+            <!-- stars -->
+            <g style="opacity:{{ sky.stars }}">
+              <sc-for list="{{ stars }}" as="s" hint-placeholder-count="0"><circle cx="{{ s.x }}" cy="{{ s.y }}" r="{{ s.r }}" fill="#fff" style="animation:twinkle {{ s.dur }}s ease-in-out infinite;animation-delay:{{ s.delay }}s"></circle></sc-for>
+            </g>
+            <!-- sun / moon -->
+            <circle cx="{{ sun.x }}" cy="{{ sun.y }}" r="70" fill="url(#v2glow)" style="opacity:{{ sun.o }}"></circle>
+            <circle cx="{{ sun.x }}" cy="{{ sun.y }}" r="22" fill="#ffd9a0" style="opacity:{{ sun.o }}"></circle>
+            <circle cx="{{ moon.x }}" cy="{{ moon.y }}" r="16" fill="#eef2ff" style="opacity:{{ moon.o }}"></circle>
+            <circle cx="{{ moon.x2 }}" cy="{{ moon.y2 }}" r="13" fill="{{ sky.top }}" style="opacity:{{ moon.o }}"></circle>
+            <!-- skyline layers -->
+            <g style="transform:translateX({{ skyline.backX }}px)"><sc-for list="{{ skyline.back }}" as="b" hint-placeholder-count="0"><rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" fill="{{ sky.back }}"></rect></sc-for></g>
+            <g style="transform:translateX({{ skyline.midX }}px)"><sc-for list="{{ skyline.mid }}" as="b" hint-placeholder-count="0"><rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" fill="{{ sky.mid }}"></rect></sc-for></g>
+            <!-- ground -->
+            <rect x="0" y="372" width="640" height="148" fill="url(#v2ground)"></rect>
+            <ellipse cx="336" cy="384" rx="160" ry="40" fill="#000" style="opacity:{{ shadowO }}"></ellipse>
+            <!-- crane -->
+            <g style="opacity:{{ crane.o }};transform:translateY({{ crane.rise }}px)">
+              <rect x="{{ crane.x }}" y="{{ crane.top }}" width="7" height="{{ crane.h }}" fill="#f2b544"></rect>
+              <sc-for list="{{ crane.rungs }}" as="r" hint-placeholder-count="0"><line x1="{{ crane.x }}" y1="{{ r }}" x2="{{ crane.x2 }}" y2="{{ r }}" stroke="#0b1220" stroke-opacity=".35" stroke-width="1"></line></sc-for>
+              <g style="transform-origin:{{ crane.pivotX }}px {{ crane.top }}px;transform:rotate({{ crane.angle }}deg)">
+                <rect x="{{ crane.jibX }}" y="{{ crane.jibY }}" width="{{ crane.jibW }}" height="6" fill="#f2b544"></rect>
+                <rect x="{{ crane.cwX }}" y="{{ crane.jibY }}" width="18" height="14" fill="#c98a1c"></rect>
+                <line x1="{{ crane.pivotX }}" y1="{{ crane.cabY }}" x2="{{ crane.jibX }}" y2="{{ crane.jibY }}" stroke="#f2b544" stroke-width="2"></line>
+                <line x1="{{ crane.hookX }}" y1="{{ crane.jibY }}" x2="{{ crane.hookX }}" y2="{{ crane.hookY }}" stroke="#d1d5db" stroke-width="1.5"></line>
+                <rect x="{{ crane.loadX }}" y="{{ crane.hookY }}" width="26" height="12" rx="2" fill="#d9d2c5" style="opacity:{{ crane.loadO }}"></rect>
+              </g>
+              <rect x="{{ crane.cabX }}" y="{{ crane.cabY }}" width="16" height="12" rx="2" fill="#1a1f2b"></rect>
+            </g>
+            <!-- foundation -->
+            <g style="opacity:{{ foundation.o }};transform:translateY({{ foundation.y }}px)">
+              <polygon points="{{ foundation.top }}" fill="#6b6f77"></polygon>
+              <polygon points="{{ foundation.left }}" fill="#4d525b"></polygon>
+              <polygon points="{{ foundation.right }}" fill="#3a3f47"></polygon>
+            </g>
+            <!-- floors -->
+            <sc-for list="{{ floors }}" as="fl" hint-placeholder-count="0">
+              <g style="opacity:{{ fl.o }};transform:translateY({{ fl.y }}px)">
+                <polygon points="{{ fl.left }}" fill="{{ fl.leftFill }}"></polygon>
+                <polygon points="{{ fl.right }}" fill="{{ fl.rightFill }}"></polygon>
+                <polygon points="{{ fl.top }}" fill="{{ fl.topFill }}"></polygon>
+                <sc-for list="{{ fl.windows }}" as="w" hint-placeholder-count="0">
+                  <polygon points="{{ w.pts }}" fill="{{ w.fill }}"></polygon>
+                </sc-for>
+              </g>
+            </sc-for>
+            <!-- dust -->
+            <sc-for list="{{ dust }}" as="d" hint-placeholder-count="0"><circle cx="{{ d.x }}" cy="{{ d.y }}" r="{{ d.r }}" fill="#d9d2c5" style="opacity:{{ d.o }}"></circle></sc-for>
+            <!-- roof -->
+            <g style="opacity:{{ roof.o }};transform:translateY({{ roof.y }}px)">
+              <polygon points="{{ roof.left }}" fill="#2a3140"></polygon>
+              <polygon points="{{ roof.right }}" fill="#1c2230"></polygon>
+              <polygon points="{{ roof.top }}" fill="#3a4354"></polygon>
+              <polygon points="{{ roof.signFace }}" fill="#f2b544"></polygon>
+              <polygon points="{{ roof.signSide }}" fill="#c98a1c"></polygon>
+              <text x="{{ roof.textX }}" y="{{ roof.textY }}" font-size="11" font-weight="700" fill="#1a1200" font-family="Geist,sans-serif" letter-spacing="1.5" transform="{{ roof.textT }}">BEN&amp;CO</text>
+            </g>
+            <!-- window glow on ground at night -->
+            <ellipse cx="336" cy="384" rx="150" ry="30" fill="#f2b544" style="opacity:{{ glowO }}"></ellipse>
+          </svg>
+          <div style="position:absolute;left:18px;bottom:16px;display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:999px;background:rgba(11,18,32,.6);backdrop-filter:blur(8px);font-size:12px;color:#e5e7eb;letter-spacing:.06em;white-space:nowrap">
+            <span style="width:8px;height:8px;border-radius:50%;background:#f2b544;flex-shrink:0"></span>{{ phaseLabel }}
+          </div>
+          <div style="position:absolute;right:18px;bottom:16px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55)">{{ scrollHint }}</div>
+        </div>
+
+        <!-- PANEL -->
+        <div style="display:flex;flex-direction:column;gap:{{ panelGap }};max-height:{{ sceneMaxH }};min-height:0">
+          <div style="display:flex;align-items:center;gap:20px">
+            <svg width="92" height="92" viewBox="0 0 92 92" style="flex-shrink:0">
+              <circle cx="46" cy="46" r="40" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="6"></circle>
+              <circle cx="46" cy="46" r="40" fill="none" stroke="#f2b544" stroke-width="6" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="{{ ringOffset }}" transform="rotate(-90 46 46)" style="transition:stroke-dashoffset .3s"></circle>
+              <text x="46" y="51" text-anchor="middle" font-size="18" font-weight="600" fill="#fff" font-family="Geist,sans-serif">{{ ringLabel }}</text>
+            </svg>
+            <div><p style="margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#a3adc2">Construction progress</p><p style="margin:6px 0 0;font-size:18px;font-weight:500">Completion expected <span style="color:#f2b544">June 2027</span></p></div>
+          </div>
+
+          <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;position:relative">
+            <sc-for list="{{ stagesShown }}" as="s" hint-placeholder-count="5">
+              <li style="display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:14px;padding:12px 14px;border-radius:14px;background:{{ s.bg }};border:1px solid {{ s.border }};opacity:{{ s.opacity }};transform:translateX({{ s.tx }}px) scale({{ s.scale }});transition:all .5s cubic-bezier(.2,.7,.2,1)">
+                <span style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:{{ s.dotBg }};color:{{ s.dotColor }};box-shadow:{{ s.ring }};transition:all .4s"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" dangerouslySetInnerHTML="{{ s.icon }}"></svg></span>
+                <span><span style="display:block;font-weight:600;font-size:15px">{{ s.title }}</span><span style="display:block;font-size:12px;color:#a3adc2;margin-top:2px">{{ s.status }}</span></span>
+                <span style="font-size:12px;color:#a3adc2;font-variant-numeric:tabular-nums">{{ s.date }}</span>
+              </li>
+            </sc-for>
+          </ol>
+
+          <div style="display:{{ offersDisplay }};grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+            <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:10px">
+              <p style="margin:0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#a3adc2">Buy off-plan</p>
+              <p style="margin:0;font-size:24px;font-family:'Instrument Serif',Georgia,serif">3,200 BAM<span style="font-size:14px;color:#a3adc2;font-family:Geist,sans-serif"> / m²</span></p>
+              <p style="margin:0;font-size:13px;color:#a3adc2">11 of 24 units still available</p>
+              <button onClick="{{ openOffplan }}" style="margin-top:auto;height:40px;border-radius:10px;border:0;background:#f2b544;color:#1a1200;font-weight:600;font-size:14px;cursor:pointer" style-hover="background:#ffc95c">Reserve a unit</button>
+            </div>
+            <div style="padding:16px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;gap:10px">
+              <p style="margin:0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#a3adc2">Invest in the build</p>
+              <p style="margin:0;font-size:24px;font-family:'Instrument Serif',Georgia,serif">12%<span style="font-size:14px;color:#a3adc2;font-family:Geist,sans-serif"> expected return</span></p>
+              <div><div style="display:flex;justify-content:space-between;font-size:12px;color:#a3adc2;margin-bottom:6px"><span>640,000 raised</span><span>1,800,000 BAM</span></div><div style="height:6px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden"><div style="height:100%;width:{{ fundWidth }};background:linear-gradient(90deg,#d97706,#f2b544);border-radius:999px;transition:width 1.4s cubic-bezier(.2,.7,.2,1)"></div></div></div>
+              <button onClick="{{ openInvest }}" style="margin-top:auto;height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;font-weight:600;font-size:14px;cursor:pointer" style-hover="background:rgba(255,255,255,.08)">Invest from 20,000 BAM</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CAR TOURS -->
+<sc-if value="{{ showTours }}" hint-placeholder-val="{{ true }}">
+<section id="tours" style="padding:112px 0 96px;background:#efe9df">
+  <div style="max-width:1240px;margin:0 auto;padding:0 24px">
+    <div data-reveal="1" style="max-width:640px;margin-bottom:40px;opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease">
+      <p style="margin:0 0 12px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#b4791b;font-weight:600">Car tours</p>
+      <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(36px,4.6vw,60px);line-height:1.02;letter-spacing:-.02em">Bosnia, <em>driven</em> by locals</h2>
+      <p style="margin:16px 0 0;font-size:16px;line-height:1.6;color:#4b5563">Private day trips from Sarajevo with a Ben&amp;Co driver. Pick a route and a date — we handle the rest.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:20px">
+      <sc-for list="{{ tours }}" as="t" hint-placeholder-count="3">
+        <article data-reveal="1" style="position:relative;border-radius:22px;overflow:hidden;min-height:380px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;background:#1a1f2b;opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease">
+          <img src="{{ t.image }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.7,.2,1)" style-hover="transform:scale(1.05)">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,18,32,0) 30%,rgba(11,18,32,.92) 100%)"></div>
+          <div style="position:relative;padding:22px;display:flex;flex-direction:column;gap:10px">
+            <p style="margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#f2b544;font-weight:600">{{ t.duration }} · {{ t.km }}</p>
+            <h3 style="margin:0;font-size:24px;font-weight:600;letter-spacing:-.01em">{{ t.title }}</h3>
+            <p style="margin:0;font-size:14px;line-height:1.5;color:rgba(255,255,255,.8)">{{ t.blurb }}</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px">
+              <span style="font-size:18px;font-weight:600">{{ t.price }} <span style="font-size:12px;font-weight:500;color:rgba(255,255,255,.7)">/ person</span></span>
+              <button onClick="{{ t.book }}" style="height:40px;padding:0 16px;border-radius:10px;border:0;background:#fff;color:#1a1f2b;font-weight:600;font-size:14px;cursor:pointer" style-hover="background:#f2b544">Book tour</button>
+            </div>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+  </div>
+</section>
+</sc-if>
+
+<!-- ABOUT -->
+<section id="about" style="padding:112px 0;background:#f7f4ee">
+  <div style="max-width:1240px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:56px;align-items:center">
+    <div data-reveal="1" style="position:relative;opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease">
+      <img src="public/images/properties/Vila%20sa%20jezerom%204.avif" alt="Ben&amp;Co" style="width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:24px;display:block">
+      <div style="position:absolute;left:-12px;bottom:28px;padding:16px 18px;border-radius:16px;background:#0b1220;color:#fff;box-shadow:0 20px 40px -20px rgba(0,0,0,.6);display:flex;align-items:center;gap:14px">
+        <img src="public/benco-logo.jpg" alt="" style="width:44px;height:44px;border-radius:10px;object-fit:cover">
+        <div><p style="margin:0;font-size:12px;color:#a3adc2;letter-spacing:.1em;text-transform:uppercase">Since 2016</p><p style="margin:2px 0 0;font-weight:600">Gajev Trg 4, Sarajevo</p></div>
+      </div>
+    </div>
+    <div data-reveal="1" style="opacity:0;transform:translateY(24px);transition:opacity .8s ease .1s,transform .8s ease .1s">
+      <p style="margin:0 0 12px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#b4791b;font-weight:600">About Ben&amp;Co</p>
+      <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(36px,4.6vw,56px);line-height:1.04;letter-spacing:-.02em">We build what we'd <em>live in</em> ourselves</h2>
+      <p style="margin:20px 0 0;font-size:17px;line-height:1.65;color:#4b5563">Ben&amp;Co is a Sarajevo real estate and construction company. For ten years we've helped clients find the right property or realise a build — with a small team, an individual approach and complete transparency on every project.</p>
+      <ul style="list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+        <sc-for list="{{ highlights }}" as="h" hint-placeholder-count="4">
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:15px;color:#1a1f2b"><span style="width:22px;height:22px;border-radius:50%;background:#f2b544;color:#1a1200;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>{{ h }}</li>
+        </sc-for>
+      </ul>
+      <blockquote style="margin:32px 0 0;padding:0 0 0 20px;border-left:2px solid #f2b544;font-family:'Instrument Serif',Georgia,serif;font-size:22px;line-height:1.35;color:#1a1f2b;font-style:italic">"Our vision is to become a leading company in the region, recognised for quality, professionalism and innovative solutions."</blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="padding:0 0 112px;background:#f7f4ee">
+  <div style="max-width:1240px;margin:0 auto;padding:0 24px">
+    <div data-reveal="1" style="background:#0b1220;color:#fff;border-radius:28px;padding:clamp(28px,5vw,56px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:40px;opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease">
+      <div style="display:flex;flex-direction:column;gap:28px">
+        <div>
+          <p style="margin:0 0 12px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#f2b544;font-weight:600">Contact</p>
+          <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(34px,4vw,52px);line-height:1.04;letter-spacing:-.02em">Talk to a <em>person</em>, not a form</h2>
+          <p style="margin:16px 0 0;color:#a3adc2;line-height:1.6">We answer the same day, Monday to Saturday.</p>
+        </div>
+        <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ contactInfo }}" as="ci" hint-placeholder-count="4">
+            <li><a href="{{ ci.href }}" style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.1);transition:background .2s" style-hover="background:rgba(255,255,255,.06)"><span style="width:38px;height:38px;border-radius:10px;background:rgba(242,181,68,.14);color:#f2b544;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" dangerouslySetInnerHTML="{{ ci.icon }}"></svg></span><span><span style="display:block;font-size:12px;color:#a3adc2">{{ ci.label }}</span><span style="display:block;font-size:15px;font-weight:500;word-break:break-word">{{ ci.value }}</span></span></a></li>
+          </sc-for>
+        </ul>
+      </div>
+      <form style="display:flex;flex-direction:column;gap:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:22px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+          <input placeholder="Full name" style="height:48px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(11,18,32,.6);color:#fff;font-size:15px;outline:none;min-width:0" style-focus="border-color:#f2b544">
+          <input placeholder="Phone" type="tel" style="height:48px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(11,18,32,.6);color:#fff;font-size:15px;outline:none;min-width:0" style-focus="border-color:#f2b544">
+        </div>
+        <input placeholder="Email address" type="email" style="height:48px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(11,18,32,.6);color:#fff;font-size:15px;outline:none" style-focus="border-color:#f2b544">
+        <textarea placeholder="How can we help you?" rows="5" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(11,18,32,.6);color:#fff;font-size:15px;outline:none;resize:vertical" style-focus="border-color:#f2b544"></textarea>
+        <button type="button" style="height:50px;border-radius:12px;border:0;background:#f2b544;color:#1a1200;font-weight:600;font-size:15px;cursor:pointer" style-hover="background:#ffc95c">Send message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:#f7f4ee;border-top:1px solid #e2dccf">
+  <div style="max-width:1240px;margin:0 auto;padding:40px 24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
+    <div style="display:flex;align-items:center;gap:12px"><img src="public/benco-logo.jpg" alt="Ben&amp;Co" style="width:36px;height:36px;border-radius:8px;object-fit:cover"><span style="font-size:16px;font-weight:600;letter-spacing:.14em">BEN<span style="color:#d97706">&amp;</span>CO</span><span style="font-size:13px;color:#6b7280;margin-left:8px">Real estate &amp; construction</span></div>
+    <div style="display:flex;gap:22px;font-size:14px;color:#4b5563"><a href="#stays" style-hover="color:#1a1f2b">Stays</a><a href="#invest" style-hover="color:#1a1f2b">Invest</a><a href="#tours" style-hover="color:#1a1f2b">Car tours</a><a href="#about" style-hover="color:#1a1f2b">About</a><a href="#contact" style-hover="color:#1a1f2b">Contact</a></div>
+    <div style="display:flex;gap:8px">
+      <sc-for list="{{ socials }}" as="s" hint-placeholder-count="3"><a href="#" aria-label="{{ s.label }}" style="width:36px;height:36px;border-radius:10px;border:1px solid #e2dccf;display:flex;align-items:center;justify-content:center;color:#1a1f2b" style-hover="background:#1a1f2b;color:#fff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" dangerouslySetInnerHTML="{{ s.icon }}"></svg></a></sc-for>
+    </div>
+    <p style="margin:0;width:100%;font-size:12px;color:#6b7280">© 2026 Ben&amp;Co. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- BOOKING DRAWER -->
+<div onClick="{{ closeDrawer }}" style="position:fixed;inset:0;z-index:80;background:rgba(11,18,32,.55);backdrop-filter:blur(4px);opacity:{{ drawer.backdropO }};pointer-events:{{ drawer.events }};transition:opacity .35s"></div>
+<aside style="position:fixed;top:0;right:0;bottom:0;z-index:90;width:min(460px,100%);background:#fff;color:#1a1f2b;box-shadow:-30px 0 60px -30px rgba(0,0,0,.5);transform:translateX({{ drawer.tx }});transition:transform .45s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;overflow-y:auto">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #eee8dc;position:sticky;top:0;background:#fff;z-index:1">
+    <div><p style="margin:0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#b4791b;font-weight:600">{{ drawer.kicker }}</p><h3 style="margin:2px 0 0;font-size:18px;font-weight:600">{{ drawer.title }}</h3></div>
+    <button onClick="{{ closeDrawer }}" aria-label="Close" style="width:38px;height:38px;border-radius:50%;border:1px solid #e2dccf;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="background:#f3efe7"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+  </div>
+
+  <sc-if value="{{ drawer.done }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:48px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px">
+      <span style="width:64px;height:64px;border-radius:50%;background:#e8f7ee;color:#16a34a;display:flex;align-items:center;justify-content:center"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+      <h4 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:32px">{{ drawer.doneTitle }}</h4>
+      <p style="margin:0;color:#4b5563;line-height:1.6;max-width:320px">{{ drawer.doneBody }}</p>
+      <button onClick="{{ closeDrawer }}" style="margin-top:10px;height:44px;padding:0 22px;border-radius:12px;border:0;background:#1a1f2b;color:#fff;font-weight:600;cursor:pointer">Done</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ drawer.showForm }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:20px 22px 28px;display:flex;flex-direction:column;gap:18px">
+      <sc-if value="{{ drawer.hasImage }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:14px;align-items:center;padding:12px;border-radius:14px;background:#f7f4ee">
+          <img src="{{ drawer.image }}" alt="" style="width:72px;height:56px;object-fit:cover;border-radius:10px">
+          <div style="min-width:0"><p style="margin:0;font-weight:600;font-size:15px">{{ drawer.itemTitle }}</p><p style="margin:2px 0 0;font-size:13px;color:#6b7280">{{ drawer.itemSub }}</p></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ drawer.hasDates }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <button onClick="{{ cal.prev }}" style="width:32px;height:32px;border-radius:50%;border:1px solid #e2dccf;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
+            <span style="font-weight:600;font-size:15px">{{ cal.title }}</span>
+            <button onClick="{{ cal.next }}" style="width:32px;height:32px;border-radius:50%;border:1px solid #e2dccf;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:11px;color:#9aa1ad;font-weight:600;margin-bottom:4px"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">
+            <sc-for list="{{ cal.days }}" as="d" hint-placeholder-count="35">
+              <button onClick="{{ d.pick }}" disabled="{{ d.disabled }}" style="height:38px;border-radius:{{ d.radius }};border:0;background:{{ d.bg }};color:{{ d.color }};font-size:13px;font-weight:{{ d.weight }};cursor:{{ d.cursor }};text-decoration:{{ d.deco }}">{{ d.label }}</button>
+            </sc-for>
+          </div>
+          <p style="margin:10px 0 0;font-size:12px;color:#6b7280">{{ cal.hint }}</p>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ drawer.hasAmount }}" hint-placeholder-val="{{ false }}">
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600;color:#4b5563">{{ drawer.amountLabel }}</span><input type="number" value="{{ drawer.amount }}" onChange="{{ setAmount }}" style="height:48px;padding:0 14px;border-radius:12px;border:1px solid #e2dccf;font-size:15px;outline:none" style-focus="border-color:#d97706"></label>
+        <p style="margin:-8px 0 0;font-size:13px;color:#6b7280">{{ drawer.amountNote }}</p>
+      </sc-if>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <label style="display:flex;flex-direction:column;gap:6px;grid-column:span 2"><span style="font-size:12px;font-weight:600;color:#4b5563">Full name</span><input style="height:46px;padding:0 14px;border-radius:12px;border:1px solid #e2dccf;font-size:15px;outline:none" style-focus="border-color:#d97706"></label>
+        <label style="display:flex;flex-direction:column;gap:6px;min-width:0"><span style="font-size:12px;font-weight:600;color:#4b5563">Email</span><input type="email" style="height:46px;padding:0 14px;border-radius:12px;border:1px solid #e2dccf;font-size:15px;outline:none;min-width:0" style-focus="border-color:#d97706"></label>
+        <label style="display:flex;flex-direction:column;gap:6px;min-width:0"><span style="font-size:12px;font-weight:600;color:#4b5563">Phone</span><input type="tel" style="height:46px;padding:0 14px;border-radius:12px;border:1px solid #e2dccf;font-size:15px;outline:none;min-width:0" style-focus="border-color:#d97706"></label>
+        <sc-if value="{{ drawer.hasGuests }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:6px;grid-column:span 2"><span style="font-size:12px;font-weight:600;color:#4b5563">{{ drawer.guestLabel }}</span>
+            <div style="display:flex;align-items:center;gap:0;border:1px solid #e2dccf;border-radius:12px;height:46px;overflow:hidden;width:max-content">
+              <button onClick="{{ guestsDown }}" style="width:46px;height:46px;border:0;background:#fff;cursor:pointer;font-size:18px" style-hover="background:#f3efe7">−</button>
+              <span style="min-width:44px;text-align:center;font-weight:600">{{ drawer.guests }}</span>
+              <button onClick="{{ guestsUp }}" style="width:46px;height:46px;border:0;background:#fff;cursor:pointer;font-size:18px" style-hover="background:#f3efe7">+</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="padding:14px 16px;border-radius:14px;background:#f7f4ee;display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <span style="font-size:13px;color:#4b5563">{{ drawer.summaryLabel }}</span>
+        <span style="font-size:18px;font-weight:600;font-variant-numeric:tabular-nums">{{ drawer.summaryValue }}</span>
+      </div>
+      <button onClick="{{ submitDrawer }}" style="height:52px;border-radius:12px;border:0;background:#d97706;color:#fff;font-weight:600;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px" style-hover="background:#b4791b">{{ drawer.submitLabel }}</button>
+      <p style="margin:0;font-size:12px;color:#6b7280;text-align:center;line-height:1.5">{{ drawer.footnote }}</p>
+    </div>
+  </sc-if>
+</aside>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;floors&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:3,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Build scene&quot;},&quot;skyMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;day-to-night&quot;,&quot;options&quot;:[&quot;day-to-night&quot;,&quot;night&quot;],&quot;tsType&quot;:&quot;'day-to-night' | 'night'&quot;,&quot;section&quot;:&quot;Build scene&quot;},&quot;showTours&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Sections&quot;}}">
+const I = {
+  bed: '<path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"></path><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"></path><path d="M12 4v6"></path><path d="M2 18h20"></path>',
+  building: '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path>',
+  car: '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"></path><circle cx="7" cy="17" r="2"></circle><path d="M9 17h6"></path><circle cx="17" cy="17" r="2"></circle>',
+  check: '<path d="M20 6 9 17l-5-5"></path>',
+  hardhat: '<path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"></path><path d="M14 6a6 6 0 0 1 6 6v3"></path><path d="M4 15v-3a6 6 0 0 1 6-6"></path><rect x="2" y="15" width="20" height="4" rx="1"></rect>',
+  lock: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>',
+  phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>',
+  mail: '<rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>',
+  pin: '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path><circle cx="12" cy="10" r="3"></circle>',
+  clock: '<circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path>',
+  facebook: '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>',
+  instagram: '<rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>',
+  linkedin: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle>',
+};
+const h = (s) => ({ __html: s });
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const map = (v, a, b, c, d) => c + (d - c) * clamp01((v - a) / (b - a));
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const bounce = (t) => { if (t >= 1) return 1; const n1 = 7.5625, d1 = 2.75; if (t < 1 / d1) return n1 * t * t; if (t < 2 / d1) return n1 * (t -= 1.5 / d1) * t + 0.75; if (t < 2.5 / d1) return n1 * (t -= 2.25 / d1) * t + 0.9375; return n1 * (t -= 2.625 / d1) * t + 0.984375; };
+const hex = (c) => [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)];
+const lerpColor = (a, b, t) => { const A = hex(a), B = hex(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',') + ')'; };
+const lerp3 = (a, b, c, t) => t < 0.5 ? lerpColor(a, b, t * 2) : lerpColor(b, c, (t - 0.5) * 2);
+
+// Isometric projection
+const OX = 318, OY = 318, COS = 0.866, SIN = 0.5;
+const W = 150, D = 110, H = 30;
+const iso = (x, y, z) => [OX + (x - y) * COS, OY + (x + y) * SIN - z];
+const pts = (arr) => arr.map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+const box = (x0, y0, x1, y1, z0, z1) => ({
+  top: pts([iso(x0, y0, z1), iso(x1, y0, z1), iso(x1, y1, z1), iso(x0, y1, z1)]),
+  left: pts([iso(x0, y1, z0), iso(x1, y1, z0), iso(x1, y1, z1), iso(x0, y1, z1)]),
+  right: pts([iso(x1, y0, z0), iso(x1, y1, z0), iso(x1, y1, z1), iso(x1, y0, z1)]),
+});
+const STARS = Array.from({ length: 46 }, (_, i) => { const s = Math.sin(i * 12.9898) * 43758.5453; const f = s - Math.floor(s); const s2 = Math.sin(i * 78.233) * 43758.5453; const f2 = s2 - Math.floor(s2); return { x: Math.round(f * 640), y: Math.round(f2 * 250), r: 0.7 + (i % 3) * 0.45, dur: 2 + (i % 5) * 0.7, delay: (i % 7) * 0.4 }; });
+const BACK = [[0,300,40,72],[46,280,30,92],[84,310,52,62],[142,270,28,102],[176,296,44,76],[228,258,36,114],[270,300,60,72],[338,282,30,90],[374,302,50,70],[430,262,34,110],[470,292,46,80],[522,306,40,66],[568,276,32,96],[606,298,60,74]].map(([x,y,w,h]) => ({ x, y, w, h }));
+const MID = [[-10,330,36,50],[40,318,28,62],[96,338,60,42],[168,322,30,58],[212,340,48,40],[300,334,24,46],[400,326,40,54],[452,342,54,38],[520,320,30,60],[562,338,58,42],[634,326,40,54]].map(([x,y,w,h]) => ({ x, y, w, h }));
+const STAGES = [
+  { title: 'Land and permits', date: 'Mar 2026', done: true },
+  { title: 'Foundation', date: 'May 2026', done: true },
+  { title: 'Structure', date: 'Oct 2026', done: false },
+  { title: 'Facade and windows', date: 'Feb 2027', done: false },
+  { title: 'Interior and handover', date: 'Jun 2027', done: false },
+];
+const PROPS = [
+  { id: 'lake', title: 'Lakeside villa', location: 'Sarajevo', type: 'villa', mode: 'sale', bedrooms: 4, bathrooms: 3, area: 320, price: '450,000 BAM', priceNote: 'for sale', tag: 'Villa · Sale', image: 'public/images/properties/Vila%20sa%20jezerom%201.avif' },
+  { id: 'pool', title: 'Villa with pool', location: 'Sarajevo', type: 'villa', mode: 'rent', nightly: 450, maxGuests: 10, bedrooms: 5, bathrooms: 4, area: 380, price: '450 BAM', priceNote: 'per night · also for sale', tag: 'Villa · Stay', image: 'public/images/properties/Villa%20sa%20bazenom%201.avif' },
+  { id: 'dacha', title: 'Dacha apartment', location: 'Sarajevo', type: 'apartment', mode: 'rent', nightly: 180, maxGuests: 4, bedrooms: 2, bathrooms: 1, area: 65, price: '180 BAM', priceNote: 'per night', tag: 'Apartment · Stay', image: 'public/images/properties/Apartman%20Dacha%201.jpeg' },
+  { id: 'jahorina', title: 'Jahorina apartment', location: 'Jahorina', type: 'apartment', mode: 'rent', nightly: 220, maxGuests: 5, bedrooms: 2, bathrooms: 1, area: 58, price: '220 BAM', priceNote: 'per night', tag: 'Apartment · Stay', image: 'public/images/properties/Jahorina%20apartman1.avif' },
+];
+const TOURS = [
+  { id: 'jahorina', title: 'Jahorina mountain day', duration: '8 h', km: '60 km', price: 90, blurb: 'Ski in winter, hike in summer — pickup in Sarajevo, lunch on the mountain.', image: 'public/images/properties/Jahorina%20apartman%202.avif' },
+  { id: 'mostar', title: 'Mostar & Herzegovina', duration: '10 h', km: '260 km', price: 120, blurb: 'Old Bridge, Blagaj tekija and Kravice falls, with a driver who knows the back roads.', image: 'public/images/properties/Vila%20sa%20jezerom%202.avif' },
+  { id: 'sarajevo', title: 'Sarajevo & Vrelo Bosne', duration: '5 h', km: '35 km', price: 60, blurb: 'Baščaršija, the Tunnel of Hope and the springs of the Bosna river.', image: 'public/images/properties/Villa%20sa%20bazenom%202.avif' },
+];
+const OCCUPIED = ['2026-10-03', '2026-10-04', '2026-10-05', '2026-10-17', '2026-10-18', '2026-11-07', '2026-11-08', '2026-11-09'];
+const isoDate = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const fmt = (n) => n.toLocaleString('en-US');
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+class Component extends DCLogic {
+  state = { p: 0, scrollY: 0, countT: 0, fundIn: false, heroTab: 0, filter: 'all', open: false, kind: 'stay', item: null, done: false, from: null, to: null, guests: 2, amount: 20000, month: new Date(2026, 9, 1) };
+  sceneRef = React.createRef();
+  countersRef = React.createRef();
+  componentDidMount() {
+    if (super.componentDidMount) super.componentDidMount();
+    this.onScroll = () => {
+      if (this.raf) return;
+      this.raf = setTimeout(() => {
+        this.raf = 0;
+        const el = this.sceneRef.current;
+        let p = this.state.p;
+        if (el) {
+          const r = el.getBoundingClientRect();
+          p = clamp01(-r.top / (r.height - window.innerHeight));
+          if (r.top < window.innerHeight && !this.state.fundIn) this.setState({ fundIn: true });
+        }
+        const c = this.countersRef.current;
+        if (c && !this.counting && c.getBoundingClientRect().top < window.innerHeight - 40) this.startCount();
+        const scrollY = window.scrollY, narrow = window.innerWidth < 1000, vh = window.innerHeight;
+        if (p !== this.state.p || Math.abs(scrollY - this.state.scrollY) > 2 || narrow !== this.state.narrow || vh !== this.state.vh) this.setState({ p, scrollY, narrow, vh });
+      }, 16);
+    };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    window.addEventListener('resize', this.onScroll);
+    this.io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'none'; this.io.unobserve(e.target); } }), { threshold: 0.12 });
+    this.scanReveal();
+    this.onScroll();
+  }
+  componentDidUpdate(a, b, c) { if (super.componentDidUpdate) super.componentDidUpdate(a, b, c); this.scanReveal(); }
+  scanReveal() { document.querySelectorAll('[data-reveal]:not([data-seen])').forEach((el) => { el.setAttribute('data-seen', '1'); this.io.observe(el); }); }
+  componentWillUnmount() { if (super.componentWillUnmount) super.componentWillUnmount(); window.removeEventListener('scroll', this.onScroll); window.removeEventListener('resize', this.onScroll); this.io && this.io.disconnect(); }
+  startCount() {
+    this.counting = true;
+    const start = performance.now();
+    const tick = () => { const e = Math.min(1, (performance.now() - start) / 1600); this.setState({ countT: e === 1 ? 1 : 1 - Math.pow(2, -10 * e) }); if (e < 1) setTimeout(tick, 16); };
+    tick();
+  }
+  open(kind, item) { this.setState({ open: true, kind, item, done: false, from: null, to: null, guests: kind === 'tour' ? 2 : 2, amount: kind === 'invest' ? 20000 : kind === 'offplan' ? 55 : 0 }); }
+  pickDay(d) {
+    const { from, to, kind } = this.state;
+    if (kind === 'tour') { this.setState({ from: d, to: d }); return; }
+    if (!from || (from && to)) this.setState({ from: d, to: null });
+    else if (d <= from) this.setState({ from: d, to: null });
+    else this.setState({ to: d });
+  }
+  renderVals() {
+    const S = this.state, p = S.p;
+    const floorsN = Math.max(3, Math.min(8, this.props.floors ?? 5));
+    const skyMode = this.props.skyMode ?? 'day-to-night';
+    const showTours = this.props.showTours ?? true;
+    const nightT = skyMode === 'night' ? 1 : p;
+
+    // ---- SKY ----
+    const sky = {
+      top: lerp3('#8fb9e6', '#3b3766', '#070b18', nightT),
+      bottom: lerp3('#dcebf7', '#f0925c', '#1a2440', nightT),
+      ground: lerp3('#c9cfc0', '#6d5a63', '#0e1424', nightT),
+      groundDeep: lerp3('#aeb5a4', '#3a2f3e', '#070b14', nightT),
+      back: lerp3('#b9cbe0', '#5a4f7a', '#111a2e', nightT),
+      mid: lerp3('#96aac4', '#3e355a', '#0c1424', nightT),
+      stars: map(nightT, 0.62, 0.95, 0, 1),
+    };
+    const sun = { x: 120 + p * 60, y: map(p, 0, 0.55, 90, 380), o: map(p, 0.35, 0.55, 1, 0) };
+    const moon = { x: 520, y: map(p, 0.55, 0.9, 260, 70), x2: 528, y2: map(p, 0.55, 0.9, 254, 64), o: map(p, 0.58, 0.8, 0, 1) };
+    const skyline = { back: BACK, mid: MID, backX: (0.5 - p) * 30, midX: (0.5 - p) * 70 };
+
+    // ---- BUILDING ----
+    const start0 = 0.12, per = 0.62 / floorsN, dur = per * 0.85;
+    const foundT = map(p, 0.03, 0.11, 0, 1);
+    const fb = box(-8, -8, W + 8, D + 8, -10, 0);
+    const foundation = { ...fb, o: foundT, y: (1 - easeOut(foundT)) * 40 };
+    const winCount = floorsN * 7; let wi = 0;
+    const floors = []; const dust = [];
+    for (let i = 0; i < floorsN; i++) {
+      const s = start0 + i * per; const t = clamp01((p - s) / dur); const e = bounce(t);
+      const z0 = i * H, z1 = z0 + H;
+      const b = box(0, 0, W, D, z0, z1);
+      const windows = [];
+      const lit = (idx) => { const order = (idx * 7 + 3) % winCount; const at = 0.76 + (order / winCount) * 0.18; return map(p, at, at + 0.015, 0, 1); };
+      for (let k = 0; k < 4; k++) { const x = 12 + k * 34; const l = lit(wi++); windows.push({ pts: pts([iso(x, D, z0 + 8), iso(x + 22, D, z0 + 8), iso(x + 22, D, z0 + 24), iso(x, D, z0 + 24)]), fill: lerpColor('#2b3341', '#ffd27a', l) }); }
+      for (let k = 0; k < 3; k++) { const y = 12 + k * 32; const l = lit(wi++); windows.push({ pts: pts([iso(W, y, z0 + 8), iso(W, y + 22, z0 + 8), iso(W, y + 22, z0 + 24), iso(W, y, z0 + 24)]), fill: lerpColor('#1f2632', '#f2b544', l) }); }
+      floors.push({ ...b, windows, o: Math.min(1, t * 4), y: -(1 - e) * 110, leftFill: lerpColor('#c9c0b0', '#6a6a76', nightT * 0.55), rightFill: lerpColor('#9c927f', '#44454f', nightT * 0.55), topFill: lerpColor('#e6dfd2', '#8a8a96', nightT * 0.55) });
+      const land = s + dur; const dt = (p - land) / 0.06;
+      if (dt > 0 && dt < 1) { const [lx, ly] = iso(0, D, z0), [rx, ry] = iso(W, 0, z0), [fx, fy] = iso(W, D, z0); [[lx, ly, -1], [fx, fy, 0], [rx, ry, 1]].forEach(([x, y, dir]) => { for (let j = 0; j < 3; j++) dust.push({ x: x + dir * dt * (18 + j * 10) + (j - 1) * 6, y: y + 2 - dt * (10 + j * 6), r: 3 + dt * (9 + j * 3), o: (1 - dt) * 0.55 }); }); }
+    }
+    const zt = floorsN * H;
+    const rt = map(p, 0.7, 0.78, 0, 1);
+    const rb = box(4, 4, W - 4, D - 4, zt, zt + 8);
+    const sx0 = W / 2 - 34, sz = zt + 14;
+    const roof = { ...rb, o: rt, y: -(1 - easeOut(rt)) * 60,
+      signFace: pts([iso(sx0, D - 4, zt + 8), iso(sx0 + 68, D - 4, zt + 8), iso(sx0 + 68, D - 4, sz + 14), iso(sx0, D - 4, sz + 14)]),
+      signSide: pts([iso(sx0 + 68, D - 4, zt + 8), iso(sx0 + 68, D - 10, zt + 8), iso(sx0 + 68, D - 10, sz + 14), iso(sx0 + 68, D - 4, sz + 14)]),
+      textX: 0, textY: 0, textT: '' };
+    const [tx, ty] = iso(sx0 + 34, D - 4, zt + 8 + 8);
+    roof.textT = 'translate(' + tx.toFixed(1) + ' ' + ty.toFixed(1) + ') skewY(30) translate(-24 4)';
+
+    // ---- CRANE ----
+    const [cx, cy] = iso(W + 70, D * 0.35, 0);
+    const craneTop = cy - 350;
+    const jibLen = 250;
+    const activeFloor = Math.min(floorsN - 1, Math.max(0, Math.floor((p - start0) / per)));
+    const ft = clamp01((p - (start0 + activeFloor * per)) / dur);
+    const angle = -6 + 10 * Math.sin(p * 11) + (p < start0 ? 0 : (1 - ft) * 4);
+    const hookY = craneTop + 6 + Math.max(20, (cy - 20 - activeFloor * H - (1 - ft) * 110) - craneTop - 30 - 20);
+    const rungs = []; for (let y = craneTop + 12; y < cy; y += 16) rungs.push(y);
+    const crane = { o: map(p, 0.8, 0.9, 1, 0) * map(p, 0, 0.05, 0.4, 1), rise: (1 - map(p, 0, 0.1, 0, 1)) * 40, x: cx, x2: cx + 7, top: craneTop, h: cy - craneTop, rungs, pivotX: cx + 3.5, jibX: cx + 3.5 - jibLen, jibY: craneTop + 2, jibW: jibLen + 40, cwX: cx + 22, cabX: cx - 4.5, cabY: craneTop + 8, angle, hookX: cx + 3.5 - jibLen + 46 + 40 * Math.sin(p * 11), hookY, loadX: cx + 3.5 - jibLen + 46 + 40 * Math.sin(p * 11) - 13, loadO: ft < 0.9 && p > start0 && p < 0.75 ? 1 : 0 };
+
+    const built = map(p, start0, 0.78, 0, 1);
+    const stageIdx = Math.min(STAGES.length - 1, Math.floor(map(p, 0.02, 0.95, 0, 1) * STAGES.length));
+    const phaseLabel = p < 0.03 ? 'Site prepared' : p < start0 ? 'Pouring foundation' : p < 0.7 ? 'Floor ' + Math.min(floorsN, activeFloor + 1) + ' of ' + floorsN + ' rising' : p < 0.8 ? 'Roof & facade' : p < 0.95 ? 'Lights coming on' : 'Welcome home';
+
+    // ---- DRAWER ----
+    const k = S.kind, item = S.item;
+    const isStay = k === 'stay', isTour = k === 'tour', isInvest = k === 'invest', isOffplan = k === 'offplan', isOffer = k === 'offer';
+    const nights = S.from && S.to && isStay ? Math.round((S.to - S.from) / 86400000) : 0;
+    const price = isStay ? (item ? item.nightly : 0) : 0;
+    const total = isStay ? nights * price : isTour ? (item ? item.price * S.guests : 0) : isInvest ? S.amount : isOffplan ? S.amount * 3200 : 0;
+    const drawer = {
+      tx: S.open ? '0' : '105%', backdropO: S.open ? 1 : 0, events: S.open ? 'auto' : 'none',
+      done: S.done, showForm: !S.done,
+      kicker: isStay ? 'Book your stay' : isTour ? 'Book a car tour' : isInvest ? 'Invest in the build' : isOffplan ? 'Buy off-plan' : 'Make an offer',
+      title: item ? item.title : 'Stup residential building',
+      hasImage: !!item, image: item ? item.image : '', itemTitle: item ? item.title : '', itemSub: item ? (isTour ? item.duration + ' · ' + item.km + ' · ' + item.price + ' BAM / person' : item.location + ' · ' + item.price + (isStay ? ' / night' : '')) : '',
+      hasDates: isStay || isTour, hasGuests: isStay || isTour, guestLabel: isTour ? 'Seats' : 'Guests', guests: S.guests,
+      hasAmount: isInvest || isOffplan || isOffer, amount: S.amount,
+      amountLabel: isInvest ? 'Investment amount (BAM)' : isOffplan ? 'Apartment size (m²)' : 'Your offer (BAM)',
+      amountNote: isInvest ? 'Minimum 20,000 BAM · 12% expected return · paid out on handover' : isOffplan ? '3,200 BAM / m² · 11 units available from 42 to 96 m²' : 'No obligation — we reply within one working day',
+      summaryLabel: isStay ? (nights ? nights + ' night' + (nights > 1 ? 's' : '') + ' × ' + price + ' BAM' : 'Select your dates') : isTour ? (S.from ? S.guests + ' × ' + (item ? item.price : 0) + ' BAM' : 'Select a date') : isInvest ? 'Expected return (12%)' : isOffplan ? 'Estimated price' : 'Listed price',
+      summaryValue: isStay ? (nights ? fmt(total) + ' BAM' : '—') : isTour ? (S.from ? fmt(total) + ' BAM' : '—') : isInvest ? fmt(Math.round(S.amount * 0.12)) + ' BAM' : isOffplan ? fmt(total) + ' BAM' : (item ? item.price : ''),
+      submitLabel: isStay ? 'Book now' : isTour ? 'Book tour' : isInvest ? 'Send investment request' : isOffplan ? 'Reserve a unit' : 'Send offer',
+      footnote: isStay ? 'Dates lock instantly. No payment online — we confirm by email and settle on arrival.' : isTour ? 'Private car, up to 6 seats. Free cancellation until 24 h before.' : 'Nothing is committed yet. We call you back to walk through the contract.',
+      doneTitle: isStay ? 'Booking confirmed' : isTour ? 'Tour booked' : 'Request sent',
+      doneBody: isStay ? 'The dates are reserved for you. A confirmation is on its way to your email.' : isTour ? 'Your driver will confirm the pickup time by phone the evening before.' : 'We will get back to you shortly with the next steps.',
+    };
+    // calendar
+    const m = S.month; const first = new Date(m.getFullYear(), m.getMonth(), 1); const startDow = (first.getDay() + 6) % 7; const dim = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
+    const today = new Date(2026, 8, 22);
+    const days = [];
+    for (let i = 0; i < startDow; i++) days.push({ label: '', disabled: true, bg: 'transparent', color: 'transparent', radius: '10px', weight: 400, cursor: 'default', deco: 'none', pick: null });
+    for (let d = 1; d <= dim; d++) {
+      const date = new Date(m.getFullYear(), m.getMonth(), d); const key = isoDate(date);
+      const occ = isStay && OCCUPIED.includes(key); const past = date < today;
+      const isFrom = S.from && +date === +S.from, isTo = S.to && +date === +S.to; const inR = S.from && S.to && date > S.from && date < S.to;
+      days.push({ label: d, disabled: occ || past, pick: () => this.pickDay(date), bg: isFrom || isTo ? '#1a1f2b' : inR ? '#f3e4c4' : 'transparent', color: isFrom || isTo ? '#fff' : past || occ ? '#c4c9d2' : '#1a1f2b', radius: isFrom && !isTo ? '10px 0 0 10px' : isTo ? '0 10px 10px 0' : inR ? '0' : '10px', weight: isFrom || isTo ? 600 : 400, cursor: occ || past ? 'not-allowed' : 'pointer', deco: occ ? 'line-through' : 'none' });
+    }
+    const cal = { title: MONTHS[m.getMonth()] + ' ' + m.getFullYear(), days, prev: () => this.setState({ month: new Date(m.getFullYear(), m.getMonth() - 1, 1) }), next: () => this.setState({ month: new Date(m.getFullYear(), m.getMonth() + 1, 1) }), hint: isTour ? 'Pick your tour date.' : S.from && !S.to ? 'Now pick your check-out day.' : 'Struck-through dates are already booked.' };
+
+    const filtered = PROPS.filter((x) => S.filter === 'all' || x.type === S.filter);
+    const heroTabs = [{ label: 'Stay', icon: I.bed }, { label: 'Invest', icon: I.building }, { label: 'Car tour', icon: I.car }].map((t, i) => ({ ...t, icon: h(t.icon), select: () => this.setState({ heroTab: i }), bg: S.heroTab === i ? '#1a1f2b' : 'transparent', color: S.heroTab === i ? '#fff' : '#4b5563' }));
+    const heroFields = [
+      [{ label: 'Where', options: ['Sarajevo', 'Jahorina', 'Anywhere'] }, { label: 'Type', options: ['Apartment', 'Villa', 'Any'] }, { label: 'Guests', options: ['2 guests', '4 guests', '6+ guests'] }],
+      [{ label: 'Project', options: ['Stup residential building'] }, { label: 'I want to', options: ['Invest for a return', 'Buy off-plan'] }, { label: 'Budget', options: ['20,000 – 50,000 BAM', '50,000 – 150,000 BAM', '150,000+ BAM'] }],
+      [{ label: 'Route', options: ['Jahorina mountain day', 'Mostar & Herzegovina', 'Sarajevo & Vrelo Bosne'] }, { label: 'When', options: ['This weekend', 'Next week', 'Pick a date'] }, { label: 'Seats', options: ['2 seats', '4 seats', '6 seats'] }],
+    ][S.heroTab].map((f) => ({ ...f, options: f.options.map((label) => ({ label })) }));
+
+    const stages = STAGES.map((s, i) => { const r = i <= stageIdx, a = i === stageIdx; return { ...s, icon: h(s.done ? I.check : I.hardhat), status: s.done ? 'Completed' : a ? 'In progress' : 'Upcoming', bg: a ? 'rgba(242,181,68,.1)' : r ? 'rgba(255,255,255,.05)' : 'transparent', border: a ? 'rgba(242,181,68,.45)' : r ? 'rgba(255,255,255,.1)' : 'rgba(255,255,255,.05)', opacity: r ? 1 : 0.45, tx: r ? 0 : 10, scale: a ? 1.02 : 1, dotBg: s.done ? '#22c55e' : a ? '#f2b544' : 'rgba(255,255,255,.1)', dotColor: s.done ? '#fff' : a ? '#1a1200' : '#a3adc2', ring: a ? '0 0 0 6px rgba(242,181,68,.18)' : 'none' }; });
+    const narrow = !!S.narrow;
+    const vh = S.vh || 800, shortVp = vh < 760;
+    const compact = narrow || shortVp;
+    return {
+      sceneMaxH: narrow ? 'min(46vh, 420px)' : 'calc(100vh - ' + (shortVp ? 120 : 150) + 'px)',
+      panelGap: compact ? '12px' : '20px',
+      offersDisplay: compact && p < 0.78 ? 'none' : 'grid',
+      navLinksDisplay: narrow ? 'none' : 'flex', burgerDisplay: narrow ? 'flex' : 'none', menuOpen: narrow && !!S.menuOpen,
+      toggleMenu: () => this.setState({ menuOpen: !S.menuOpen }),
+      burgerIcon: h(S.menuOpen ? '<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>' : '<path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path>'),
+      menuLinks: [{ href: '#stays', label: 'Stays' }, { href: '#invest', label: 'Invest' }, { href: '#tours', label: 'Car tours' }, { href: '#about', label: 'About' }, { href: '#contact', label: 'Contact' }],
+      scenePad: narrow ? '80px 16px 24px' : shortVp ? '80px 24px 24px' : '88px 24px 40px', sceneGap: narrow ? '16px' : '32px',
+      stagesShown: compact ? stages.filter((s, i) => i === stageIdx) : stages,
+      navBg: S.scrollY > 40 ? 'rgba(11,18,32,.82)' : 'rgba(11,18,32,0)', navLine: S.scrollY > 40 ? 'rgba(255,255,255,.08)' : 'transparent',
+      heroScale: 1 + Math.min(0.12, S.scrollY / 6000),
+      heroTabs, heroFields, heroCta: ['Check availability', 'See the project', 'Book a tour'][S.heroTab],
+      heroSubmit: () => { if (S.heroTab === 0) this.open('stay', PROPS[2]); else if (S.heroTab === 1) { const el = document.getElementById('invest'); el && window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 60, behavior: 'smooth' }); } else this.open('tour', TOURS[0]); },
+      openStay: () => this.open('stay', PROPS[2]), openInvest: () => this.open('invest', null), openOffplan: () => this.open('offplan', null),
+      countersRef: this.countersRef, sceneRef: this.sceneRef,
+      counters: [{ value: 12, suffix: '', label: 'Projects completed' }, { value: 18500, suffix: '', label: 'm² delivered' }, { value: 34, suffix: '', label: 'Happy investors' }, { value: 10, suffix: '+', label: 'Years of experience' }].map((c) => ({ ...c, display: fmt(Math.round(c.value * S.countT)) })),
+      stayFilters: [{ id: 'all', label: 'All' }, { id: 'villa', label: 'Villas' }, { id: 'apartment', label: 'Apartments' }].map((f) => ({ ...f, select: () => this.setState({ filter: f.id }), bg: S.filter === f.id ? '#1a1f2b' : 'transparent', color: S.filter === f.id ? '#fff' : '#1a1f2b', border: S.filter === f.id ? '#1a1f2b' : '#d9d2c5' })),
+      properties: filtered.map((x) => ({ ...x, cta: x.mode === 'rent' ? 'Book stay' : 'Make an offer', book: () => this.open(x.mode === 'rent' ? 'stay' : 'offer', x) })),
+      sceneHeight: '360vh', sky, sun, moon, stars: STARS, skyline, shadowO: 0.25 + built * 0.2, glowO: map(p, 0.8, 1, 0, 0.14),
+      crane, foundation, floors, dust, roof, phaseLabel, scrollHint: p < 0.05 ? 'Scroll to build' : p > 0.97 ? 'Complete' : Math.round(p * 100) + '%',
+      ringOffset: 251.3 * (1 - 0.45 * (S.fundIn ? 1 : 0)), ringLabel: Math.round(45 * (S.fundIn ? 1 : 0)) + '%', fundWidth: S.fundIn ? '35.5%' : '0%',
+      stages,
+      showTours, tours: TOURS.map((t) => ({ ...t, price: t.price + ' BAM', book: () => this.open('tour', t) })),
+      highlights: ['Professional team of experts', 'Individual approach to each client', 'Transparency in business', 'Wide portfolio of projects'],
+      contactInfo: [
+        { icon: h(I.phone), label: 'Phone', value: '+387 62 266 662', href: 'tel:+38762266662' },
+        { icon: h(I.mail), label: 'Email', value: 'realestatebenco@gmail.com', href: 'mailto:realestatebenco@gmail.com' },
+        { icon: h(I.pin), label: 'Office', value: 'Gajev Trg 4, Sarajevo', href: 'https://maps.google.com/?q=Gajev+Trg+4+Sarajevo' },
+        { icon: h(I.clock), label: 'Hours', value: 'Mon – Sat, 09:00 – 17:00', href: '#contact' },
+      ],
+      socials: [{ icon: h(I.facebook), label: 'Facebook' }, { icon: h(I.instagram), label: 'Instagram' }, { icon: h(I.linkedin), label: 'LinkedIn' }],
+      drawer, cal,
+      closeDrawer: () => this.setState({ open: false }),
+      submitDrawer: () => { if ((isStay && nights < 1) || (isTour && !S.from)) return; this.setState({ done: true }); },
+      guestsUp: () => this.setState({ guests: Math.min(isTour ? 6 : (item && item.maxGuests) || 10, S.guests + 1) }),
+      guestsDown: () => this.setState({ guests: Math.max(1, S.guests - 1) }),
+      setAmount: (e) => this.setState({ amount: Number(e.target.value) || 0 }),
+    };
+  }
+}
+</script>
+</body>
+</html>
