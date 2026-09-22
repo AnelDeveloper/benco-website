@@ -30,6 +30,22 @@ export function BuildScene({
 
   useEffect(() => setMounted(true), []);
 
+  /**
+   * Compact layout for short or narrow viewports.
+   *
+   * The pinned panel is taller than a phone screen, and anything below the fold
+   * is unreachable while the scene is pinned. Compact shrinks the scene, shows
+   * only the milestone currently in progress, and holds the offer cards back
+   * until the building is nearly finished.
+   */
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    const check = () => setCompact(window.innerWidth < 1000 || window.innerHeight < 760);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: wrapRef,
     offset: ['start start', 'end end'],
@@ -83,8 +99,16 @@ export function BuildScene({
       <div className={animate ? 'sticky top-0 flex min-h-screen items-center' : ''}>
         <div className="mx-auto grid w-full max-w-container gap-8 px-6 pb-10 pt-[88px] lg:grid-cols-2">
           {/* Scene */}
-          <div className="relative overflow-hidden rounded-panel shadow-scene">
-            <svg viewBox="0 0 640 520" className="block aspect-[640/520] w-full" role="img" aria-label="Construction">
+          <div
+            className="relative mx-auto w-full overflow-hidden rounded-panel shadow-scene"
+            style={{ maxHeight: compact ? 'min(46vh, 420px)' : 'calc(100vh - 150px)' }}
+          >
+            <svg
+              viewBox="0 0 640 520"
+              className="mx-auto block aspect-[640/520] max-h-full w-auto max-w-full"
+              role="img"
+              aria-label="Construction"
+            >
               <defs>
                 <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={s.sky.top} />
@@ -221,7 +245,8 @@ export function BuildScene({
             </div>
 
             <ol className="space-y-2">
-              {stages.map((stage, i) => {
+              {(compact ? stages.filter((_, i) => i === active) : stages).map((stage, index) => {
+                const i = compact ? active : index;
                 const isActive = i === active;
                 const reached = i <= active;
                 return (
@@ -257,7 +282,7 @@ export function BuildScene({
               })}
             </ol>
 
-            {panel}
+            {(!compact || !animate || p > 0.78) && panel}
           </div>
         </div>
       </div>
