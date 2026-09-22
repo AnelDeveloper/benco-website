@@ -11,7 +11,27 @@ import { slugify } from '@/lib/slug';
  * A "use server" module may only export async functions, so shared constants
  * live in the components that use them — only the type is exported here.
  */
-export type FormState = { errors: Record<string, string>; message: string | null };
+export type FormState = {
+  errors: Record<string, string>;
+  message: string | null;
+  /**
+   * What the user typed, echoed back.
+   *
+   * React 19 resets an uncontrolled form's fields once its action resolves, so
+   * without this a single validation error wipes the whole form. The component
+   * re-seeds each field from here.
+   */
+  values: Record<string, string> | null;
+};
+
+/** Only string entries — a File has no place in a re-seeded text input. */
+function submittedValues(formData: FormData): Record<string, string> {
+  const values: Record<string, string> = {};
+  for (const [key, value] of formData.entries()) {
+    if (typeof value === 'string') values[key] = value;
+  }
+  return values;
+}
 
 /**
  * Refresh every public surface that can show a property.
@@ -40,7 +60,13 @@ export async function createProperty(_prev: FormState, formData: FormData): Prom
   await requireAdmin();
 
   const parsed = parsePropertyForm(formData);
-  if (!parsed.ok) return { errors: parsed.errors, message: 'Provjerite označena polja.' };
+  if (!parsed.ok) {
+    return {
+      errors: parsed.errors,
+      message: 'Provjerite označena polja.',
+      values: submittedValues(formData),
+    };
+  }
 
   const db = createAdminClient();
   const slug = await uniqueSlug(slugify(parsed.data.title_bs));
@@ -52,7 +78,11 @@ export async function createProperty(_prev: FormState, formData: FormData): Prom
     .single();
 
   if (error || !data) {
-    return { errors: {}, message: `Greška pri spremanju: ${error?.message ?? 'nepoznato'}` };
+    return {
+      errors: {},
+      message: `Greška pri spremanju: ${error?.message ?? 'nepoznato'}`,
+      values: submittedValues(formData),
+    };
   }
 
   revalidatePublic();
@@ -67,15 +97,27 @@ export async function updateProperty(
   await requireAdmin();
 
   const parsed = parsePropertyForm(formData);
-  if (!parsed.ok) return { errors: parsed.errors, message: 'Provjerite označena polja.' };
+  if (!parsed.ok) {
+    return {
+      errors: parsed.errors,
+      message: 'Provjerite označena polja.',
+      values: submittedValues(formData),
+    };
+  }
 
   const db = createAdminClient();
   const { error } = await db.from('properties').update(parsed.data).eq('id', id);
 
-  if (error) return { errors: {}, message: `Greška pri spremanju: ${error.message}` };
+  if (error) {
+    return {
+      errors: {},
+      message: `Greška pri spremanju: ${error.message}`,
+      values: submittedValues(formData),
+    };
+  }
 
   revalidatePublic();
-  return { errors: {}, message: 'Sačuvano.' };
+  return { errors: {}, message: 'Sačuvano.', values: null };
 }
 
 export async function deleteProperty(id: string) {
