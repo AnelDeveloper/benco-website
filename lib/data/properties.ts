@@ -4,7 +4,7 @@ import type { ListingMode, PropertyType } from '@/lib/supabase/types';
 
 const CARD_COLUMNS = `
   id, slug, title_bs, title_en, property_type, listing_mode, location,
-  price, price_per_night, currency, area_m2, bedrooms, bathrooms,
+  price, price_per_night, currency, area_m2, bedrooms, bathrooms, max_guests,
   property_images (url, alt_bs, alt_en, sort_order)
 `;
 
@@ -21,6 +21,7 @@ export type PropertyCard = {
   areaM2: number | null;
   bedrooms: number | null;
   bathrooms: number | null;
+  maxGuests: number | null;
   coverImage: string | null;
   coverAlt: string;
 };
@@ -44,6 +45,7 @@ type PropertyCardRow = Record<string, unknown> & {
   area_m2: number | null;
   bedrooms: number | null;
   bathrooms: number | null;
+  max_guests?: number | null;
   property_images?: ImageLike[] | null;
 };
 
@@ -65,6 +67,7 @@ export function toPropertyCard(row: PropertyCardRow, locale: Locale): PropertyCa
     areaM2: row.area_m2,
     bedrooms: row.bedrooms,
     bathrooms: row.bathrooms,
+    maxGuests: row.max_guests ?? null,
     coverImage: cover?.url ?? null,
     coverAlt: cover ? localized(cover, 'alt', locale) || title : title,
   };
@@ -103,7 +106,6 @@ export type PropertyDetail = PropertyCard & {
   description: string;
   address: string | null;
   features: string[];
-  maxGuests: number | null;
   images: { url: string; alt: string }[];
 };
 
@@ -182,7 +184,6 @@ export async function getPropertyBySlug(
     description: localized(row, 'description', locale),
     address: row.address,
     features: row.features ?? [],
-    maxGuests: row.max_guests,
     images,
   };
 }
