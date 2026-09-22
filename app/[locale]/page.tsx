@@ -2,7 +2,7 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import { Landing } from '@/components/landing/Landing';
 import { About } from '@/components/landing/About';
 import { Footer } from '@/components/landing/Footer';
-import { InvestBuild } from '@/components/InvestBuild';
+import { InvestSection } from '@/components/landing/scene/InvestSection';
 import { getFeaturedProperties } from '@/lib/data/properties';
 import { getFeaturedProject, getSiteStats } from '@/lib/data/projects';
 import type { StayCard } from '@/components/landing/Stays';
@@ -54,7 +54,7 @@ export default async function HomePage() {
       stats={stats}
       projectTitle={project?.title ?? null}
       bookItem={bookItem}
-      build={<InvestBuild />}
+      build={<InvestSection />}
       toursSection={null}
       about={<About />}
       footer={<Footer />}
