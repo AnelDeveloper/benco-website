@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { StickyNote } from 'lucide-react';
 import { setRequestStatus, saveRequestNote } from '@/app/admin/_actions/requests';
+import { formatDate } from '@/lib/format';
 import type { RequestRow, RequestStatus } from '@/lib/supabase/types';
 
 const STATUS_STYLE: Record<RequestStatus, string> = {
@@ -48,7 +49,7 @@ export function RequestCard({
 
         <div className="flex flex-col items-end gap-2">
           <span className="text-xs text-slate-400">
-            {new Date(request.created_at).toLocaleDateString('bs-BA')}
+            {formatDate(request.created_at)}
           </span>
           <div className="flex flex-wrap justify-end gap-1.5">
             {(Object.keys(statusLabels) as RequestStatus[])

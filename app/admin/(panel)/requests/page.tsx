@@ -3,6 +3,7 @@ import { Mail, Phone, Banknote, Home, Building2 } from 'lucide-react';
 import { requireAdmin } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { RequestCard } from '@/components/admin/RequestCard';
+import { formatNumber } from '@/lib/format';
 import type { RequestKind, RequestRow, RequestStatus } from '@/lib/supabase/types';
 
 export const dynamic = 'force-dynamic';
@@ -119,7 +120,7 @@ export default async function RequestsPage({
                 )}
                 {request.amount !== null && (
                   <p className="flex items-center gap-1.5 text-sm font-semibold text-slate-800">
-                    <Banknote size={14} /> {Number(request.amount).toLocaleString('bs-BA')} BAM
+                    <Banknote size={14} /> {formatNumber(Number(request.amount))} BAM
                   </p>
                 )}
                 {request.units !== null && (

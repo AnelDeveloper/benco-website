@@ -9,6 +9,7 @@ import { Footer } from '@/components/Footer';
 import { BookingForm } from '@/components/public/BookingForm';
 import { RequestForm } from '@/components/public/RequestForm';
 import { getPropertyBySlug } from '@/lib/data/properties';
+import { formatNumber } from '@/lib/format';
 import type { Locale } from '@/lib/localized';
 
 export const revalidate = 60;
@@ -133,7 +134,7 @@ export default async function PropertyPage({ params }: { params: Promise<{ slug:
               <div className="mt-8 rounded-2xl bg-slate-900 p-6 text-white">
                 <p className="text-sm text-slate-300">{t('price')}</p>
                 <p className="text-3xl font-bold text-gold-400">
-                  {property.price.toLocaleString('bs-BA')} {property.currency}
+                  {formatNumber(property.price)} {property.currency}
                 </p>
               </div>
             )}

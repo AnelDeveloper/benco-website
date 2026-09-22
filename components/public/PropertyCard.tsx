@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Link } from '@/i18n/routing';
 import { MapPin, BedDouble, Bath, Maximize } from 'lucide-react';
+import { formatNumber } from '@/lib/format';
 import type { PropertyCard as Card } from '@/lib/data/properties';
 
 export function PropertyCardLink({ property, perNight }: { property: Card; perNight: string }) {
@@ -10,7 +11,7 @@ export function PropertyCardLink({ property, perNight }: { property: Card; perNi
         ? `${property.pricePerNight} ${property.currency} ${perNight}`
         : null
       : property.price
-        ? `${property.price.toLocaleString('bs-BA')} ${property.currency}`
+        ? `${formatNumber(property.price)} ${property.currency}`
         : null;
 
   return (

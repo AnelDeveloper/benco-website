@@ -8,6 +8,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { RequestForm } from '@/components/public/RequestForm';
 import { getProjectBySlug } from '@/lib/data/projects';
+import { formatNumber } from '@/lib/format';
 import type { Locale } from '@/lib/localized';
 
 export const revalidate = 60;
@@ -95,7 +96,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                   <div className="mb-2 flex items-center justify-between text-sm">
                     <span className="text-gray-700">{t('funded')}</span>
                     <span className="font-semibold text-gray-900">
-                      {project.fundedAmount.toLocaleString('bs-BA')} / {project.fundingGoal?.toLocaleString('bs-BA')} {project.currency}
+                      {formatNumber(project.fundedAmount)} / {formatNumber(project.fundingGoal)} {project.currency}
                     </span>
                   </div>
                   <div className="h-2.5 overflow-hidden rounded-full bg-gray-100">
@@ -176,7 +177,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                   <div className="mb-3 flex flex-wrap gap-2">
                     {project.minInvestment && (
                       <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-gray-700 ring-1 ring-gray-200">
-                        <Building2 size={13} /> {t('minInvestment')}: {project.minInvestment.toLocaleString('bs-BA')} {project.currency}
+                        <Building2 size={13} /> {t('minInvestment')}: {formatNumber(project.minInvestment)} {project.currency}
                       </span>
                     )}
                     {project.expectedReturnPercent && (
