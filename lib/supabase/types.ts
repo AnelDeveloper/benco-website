@@ -80,6 +80,58 @@ export type ProjectMilestoneRow = {
   created_at: string;
 };
 
+export type ProjectImageRow = {
+  id: string;
+  project_id: string;
+  url: string;
+  alt_bs: string | null;
+  alt_en: string | null;
+  sort_order: number;
+  created_at: string;
+};
+
+export type ReservationKind = 'booking' | 'block';
+export type ReservationStatus = 'confirmed' | 'cancelled';
+
+export type ReservationRow = {
+  id: string;
+  property_id: string;
+  period: string;
+  kind: ReservationKind;
+  status: ReservationStatus;
+  guest_name: string | null;
+  guest_email: string | null;
+  guest_phone: string | null;
+  guests: number | null;
+  message: string | null;
+  reason: string | null;
+  total_price: number | null;
+  ip: string | null;
+  created_at: string;
+  cancelled_at: string | null;
+};
+
+export type RequestKind = 'purchase' | 'offplan' | 'investment';
+export type RequestStatus = 'new' | 'contacted' | 'confirmed' | 'rejected';
+
+export type RequestRow = {
+  id: string;
+  kind: RequestKind;
+  property_id: string | null;
+  project_id: string | null;
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string | null;
+  amount: number | null;
+  units: number | null;
+  status: RequestStatus;
+  admin_notes: string | null;
+  ip: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type SiteStatsRow = {
   id: boolean;
   projects_completed: number;
@@ -107,7 +159,11 @@ export type Database = {
       properties: Table<PropertyRow>;
       property_images: Table<PropertyImageRow>;
       projects: Table<ProjectRow>;
+      project_images: Table<ProjectImageRow>;
       project_milestones: Table<ProjectMilestoneRow>;
+      reservations: Table<ReservationRow>;
+      requests: Table<RequestRow>;
+      admins: Table<{ email: string; created_at: string }>;
       site_stats: Table<SiteStatsRow>;
     };
     Views: Record<string, never>;
