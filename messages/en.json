@@ -37,7 +37,8 @@
     "locations": {
       "sarajevo": "Sarajevo",
       "jahorina": "Jahorina"
-    }
+    },
+    "empty": "New properties are coming soon. Contact us for the current offer."
   },
   "about": {
     "title": "About us",
