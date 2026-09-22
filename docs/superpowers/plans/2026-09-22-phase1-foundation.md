@@ -1143,6 +1143,19 @@ config({ path: '.env.local' });
 import { createClient } from '@supabase/supabase-js';
 import type { Database, ProjectMilestoneRow, ProjectRow, PropertyRow } from '../lib/supabase/types';
 
+/**
+ * supabase-js builds a Realtime client inside createClient even when nothing
+ * subscribes to anything, and that needs a WebSocket implementation. Node 22+
+ * ships one; Node 20 does not. Load `ws` only when the runtime lacks it, so
+ * this keeps working on both without an --experimental flag.
+ */
+async function ensureWebSocket() {
+  if (typeof globalThis.WebSocket === 'undefined') {
+    const ws = await import('ws');
+    (globalThis as unknown as { WebSocket: unknown }).WebSocket = ws.default ?? ws.WebSocket;
+  }
+}
+
 function serviceClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -1288,6 +1301,7 @@ const milestones: Partial<ProjectMilestoneRow>[] = [
 ];
 
 async function main() {
+  await ensureWebSocket();
   const db = serviceClient();
 
   const propertySlugs = properties.map((p) => p.slug);
@@ -1341,12 +1355,16 @@ main().catch((error) => {
 });
 ```
 
-- [ ] **Step 3: Install dotenv and type-check the script**
+- [ ] **Step 3: Install dependencies and type-check the script**
 
 ```bash
-npm install -D dotenv
+npm install -D dotenv ws @types/ws
 npx tsc --noEmit
 ```
+
+`ws` is dev-only and used by nothing but this script — it never reaches the browser
+or the production server. Next.js supplies its own WebSocket, so the web app is
+unaffected by the Node version.
 
 Expected: no errors. `tsconfig.json` includes `**/*.ts`, so `scripts/seed.ts` is
 type-checked by `next build` too — a wrong `property_type` literal fails the build,

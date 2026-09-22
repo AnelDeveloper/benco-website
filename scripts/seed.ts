@@ -15,6 +15,19 @@ config({ path: '.env.local' });
 import { createClient } from '@supabase/supabase-js';
 import type { Database, ProjectMilestoneRow, ProjectRow, PropertyRow } from '../lib/supabase/types';
 
+/**
+ * supabase-js builds a Realtime client inside createClient even when nothing
+ * subscribes to anything, and that needs a WebSocket implementation. Node 22+
+ * ships one; Node 20 does not. Load `ws` only when the runtime lacks it, so
+ * this keeps working on both without an --experimental flag.
+ */
+async function ensureWebSocket() {
+  if (typeof globalThis.WebSocket === 'undefined') {
+    const ws = await import('ws');
+    (globalThis as unknown as { WebSocket: unknown }).WebSocket = ws.default ?? ws.WebSocket;
+  }
+}
+
 function serviceClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -160,6 +173,7 @@ const milestones: Partial<ProjectMilestoneRow>[] = [
 ];
 
 async function main() {
+  await ensureWebSocket();
   const db = serviceClient();
 
   const propertySlugs = properties.map((p) => p.slug);
