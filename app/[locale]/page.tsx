@@ -5,6 +5,8 @@ import { Footer } from '@/components/landing/Footer';
 import { InvestSection } from '@/components/landing/scene/InvestSection';
 import { getFeaturedProperties } from '@/lib/data/properties';
 import { getFeaturedProject, getSiteStats } from '@/lib/data/projects';
+import { getPublishedTours } from '@/lib/data/tours';
+import { Tours } from '@/components/landing/Tours';
 import type { StayCard } from '@/components/landing/Stays';
 import type { Locale } from '@/lib/localized';
 
@@ -15,10 +17,11 @@ export default async function HomePage() {
   const locale = (await getLocale()) as Locale;
   const t = await getTranslations('properties');
 
-  const [properties, project, stats] = await Promise.all([
+  const [properties, project, stats, tours] = await Promise.all([
     getFeaturedProperties(locale),
     getFeaturedProject(locale),
     getSiteStats(),
+    getPublishedTours(locale),
   ]);
 
   const typeLabel = (type: string) =>
@@ -50,12 +53,20 @@ export default async function HomePage() {
   return (
     <Landing
       stays={stays}
-      tours={[]}
+      tours={tours.map((tour) => ({
+        id: tour.id,
+        title: tour.title,
+        subtitle: `${tour.durationHours ?? '—'} h · ${tour.distanceKm ?? '—'} km`,
+        image: tour.coverUrl,
+        currency: tour.currency,
+        pricePerPerson: tour.pricePerPerson,
+        maxGuests: tour.maxSeats,
+      }))}
       stats={stats}
       projectTitle={project?.title ?? null}
       bookItem={bookItem}
       build={<InvestSection />}
-      toursSection={null}
+      toursSection={<Tours tours={tours} />}
       about={<About />}
       footer={<Footer />}
     />

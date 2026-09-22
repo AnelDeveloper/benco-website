@@ -39,7 +39,24 @@ export async function POST(request: NextRequest) {
   let subjectTitle = '';
   let currency = 'BAM';
 
-  if (input.kind === 'purchase') {
+  if (input.kind === 'tour') {
+    const { data } = await db
+      .from('tours')
+      .select('title_bs, currency, is_published, max_seats')
+      .eq('id', input.tourId!)
+      .maybeSingle();
+    if (!data?.is_published) {
+      return NextResponse.json({ error: 'Tura nije dostupna.' }, { status: 404 });
+    }
+    if (input.seats && input.seats > data.max_seats) {
+      return NextResponse.json(
+        { error: `Maksimalan broj mjesta je ${data.max_seats}.` },
+        { status: 400 },
+      );
+    }
+    subjectTitle = data.title_bs;
+    currency = data.currency;
+  } else if (input.kind === 'purchase') {
     const { data } = await db
       .from('properties')
       .select('title_bs, currency, is_published')
@@ -66,7 +83,10 @@ export async function POST(request: NextRequest) {
   const { error } = await db.from('requests').insert({
     kind: input.kind,
     property_id: input.kind === 'purchase' ? input.propertyId : null,
-    project_id: input.kind === 'purchase' ? null : input.projectId,
+    project_id: input.kind === 'offplan' || input.kind === 'investment' ? input.projectId : null,
+    tour_id: input.kind === 'tour' ? input.tourId : null,
+    tour_date: input.kind === 'tour' ? input.tourDate : null,
+    seats: input.kind === 'tour' ? input.seats : null,
     name: input.name,
     email: input.email,
     phone: input.phone ?? null,
@@ -84,6 +104,8 @@ export async function POST(request: NextRequest) {
   await sendRequestEmail({
     kind: input.kind,
     subjectTitle,
+    tourDate: input.tourDate,
+    seats: input.seats,
     name: input.name,
     email: input.email,
     phone: input.phone,

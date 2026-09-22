@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Mail, Phone, Banknote, Home, Building2 } from 'lucide-react';
+import { Mail, Phone, Banknote, Home, Building2, Car, CalendarDays, Users } from 'lucide-react';
 import { requireAdmin } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { RequestCard } from '@/components/admin/RequestCard';
@@ -12,6 +12,7 @@ const KIND_LABEL: Record<string, string> = {
   purchase: 'Ponuda za kupovinu',
   offplan: 'Kupovina u izgradnji',
   investment: 'Ulaganje',
+  tour: 'Tura autom',
 };
 
 const STATUS_LABEL: Record<RequestStatus, string> = {
@@ -32,7 +33,7 @@ export default async function RequestsPage({
 
   // Query params come from the URL, so narrow them to known values rather than
   // passing whatever was typed straight into the query.
-  const KINDS: RequestKind[] = ['purchase', 'offplan', 'investment'];
+  const KINDS: RequestKind[] = ['purchase', 'offplan', 'investment', 'tour'];
   const STATUSES: RequestStatus[] = ['new', 'contacted', 'confirmed', 'rejected'];
 
   const kind = KINDS.find((value) => value === filters.kind);
@@ -42,16 +43,18 @@ export default async function RequestsPage({
   if (kind) query = query.eq('kind', kind);
   if (status) query = query.eq('status', status);
 
-  const [requestResult, propertyResult, projectResult] = await Promise.all([
+  const [requestResult, propertyResult, projectResult, tourResult] = await Promise.all([
     query,
     db.from('properties').select('id, title_bs'),
     db.from('projects').select('id, title_bs'),
+    db.from('tours').select('id, title_bs'),
   ]);
 
   const requests = (requestResult.data ?? []) as RequestRow[];
   const names = new Map<string, string>([
     ...(propertyResult.data ?? []).map((p) => [p.id, p.title_bs] as [string, string]),
     ...(projectResult.data ?? []).map((p) => [p.id, p.title_bs] as [string, string]),
+    ...(tourResult.data ?? []).map((p) => [p.id, p.title_bs] as [string, string]),
   ]);
 
   const chip = (active: boolean) =>
@@ -94,8 +97,10 @@ export default async function RequestsPage({
       ) : (
         <ul className="space-y-3">
           {requests.map((request) => {
-            const subject = names.get(request.property_id ?? request.project_id ?? '') ?? '—';
-            const Icon = request.kind === 'purchase' ? Home : Building2;
+            const subject =
+              names.get(request.property_id ?? request.project_id ?? request.tour_id ?? '') ?? '—';
+            const Icon =
+              request.kind === 'purchase' ? Home : request.kind === 'tour' ? Car : Building2;
 
             return (
               <RequestCard
@@ -125,6 +130,16 @@ export default async function RequestsPage({
                 )}
                 {request.units !== null && (
                   <p className="text-sm text-slate-600">Broj jedinica: {request.units}</p>
+                )}
+                {request.tour_date && (
+                  <p className="flex items-center gap-1.5 text-sm text-slate-600">
+                    <CalendarDays size={14} /> {request.tour_date}
+                  </p>
+                )}
+                {request.seats !== null && (
+                  <p className="flex items-center gap-1.5 text-sm text-slate-600">
+                    <Users size={14} /> {request.seats} mjesta
+                  </p>
                 )}
               </RequestCard>
             );

@@ -107,3 +107,48 @@ describe('email normalization', () => {
     if (result.success) expect(result.data.email).toBe('lejla@example.com');
   });
 });
+
+const TOUR_ID = '7a1b2c3d-4e5f-4a6b-9c8d-1e2f3a4b5c6d';
+
+describe('tour requests', () => {
+  const validTour = {
+    kind: 'tour' as const,
+    tourId: TOUR_ID,
+    tourDate: '2026-11-14',
+    seats: 4,
+    name: 'Emir S.',
+    email: 'emir@example.com',
+  };
+
+  it('accepts a valid tour booking', () => {
+    expect(requestSchema.safeParse(validTour).success).toBe(true);
+  });
+
+  it('requires a tour', () => {
+    const { tourId: _id, ...noTour } = validTour;
+    expect(requestSchema.safeParse(noTour).success).toBe(false);
+  });
+
+  it('requires a date', () => {
+    const { tourDate: _d, ...noDate } = validTour;
+    expect(requestSchema.safeParse(noDate).success).toBe(false);
+  });
+
+  it('rejects a malformed date', () => {
+    expect(requestSchema.safeParse({ ...validTour, tourDate: '14.11.2026' }).success).toBe(false);
+  });
+
+  it('rejects zero seats and more than twelve', () => {
+    expect(requestSchema.safeParse({ ...validTour, seats: 0 }).success).toBe(false);
+    expect(requestSchema.safeParse({ ...validTour, seats: 13 }).success).toBe(false);
+  });
+
+  it('does not require a property or project', () => {
+    const result = requestSchema.safeParse(validTour);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.propertyId ?? null).toBeNull();
+      expect(result.data.projectId ?? null).toBeNull();
+    }
+  });
+});

@@ -133,7 +133,7 @@ export async function sendBookingEmails(booking: BookingEmail) {
 }
 
 export type RequestEmail = {
-  kind: 'purchase' | 'offplan' | 'investment';
+  kind: 'purchase' | 'offplan' | 'investment' | 'tour';
   subjectTitle: string;
   name: string;
   email: string;
@@ -142,12 +142,15 @@ export type RequestEmail = {
   units?: number | null;
   currency: string;
   message?: string | null;
+  tourDate?: string | null;
+  seats?: number | null;
 };
 
 const KIND_LABEL: Record<RequestEmail['kind'], string> = {
   purchase: 'Ponuda za kupovinu',
   offplan: 'Kupovina u izgradnji',
   investment: 'Upit za ulaganje',
+  tour: 'Rezervacija ture',
 };
 
 export async function sendRequestEmail(request: RequestEmail) {
@@ -164,6 +167,8 @@ export async function sendRequestEmail(request: RequestEmail) {
       ['Telefon', request.phone ?? ''],
       ['Iznos', request.amount ? `${request.amount} ${request.currency}` : ''],
       ['Broj jedinica', request.units ? String(request.units) : ''],
+      ['Datum ture', request.tourDate ?? ''],
+      ['Broj mjesta', request.seats ? String(request.seats) : ''],
       ['Poruka', request.message ?? ''],
     ]),
   });

@@ -111,7 +111,26 @@ export type ReservationRow = {
   cancelled_at: string | null;
 };
 
-export type RequestKind = 'purchase' | 'offplan' | 'investment';
+export type TourRow = {
+  id: string;
+  slug: string;
+  title_bs: string;
+  title_en: string;
+  blurb_bs: string | null;
+  blurb_en: string | null;
+  duration_hours: number | null;
+  distance_km: number | null;
+  price_per_person: number | null;
+  currency: string;
+  cover_url: string | null;
+  max_seats: number;
+  is_published: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type RequestKind = 'purchase' | 'offplan' | 'investment' | 'tour';
 export type RequestStatus = 'new' | 'contacted' | 'confirmed' | 'rejected';
 
 export type RequestRow = {
@@ -119,6 +138,9 @@ export type RequestRow = {
   kind: RequestKind;
   property_id: string | null;
   project_id: string | null;
+  tour_id: string | null;
+  tour_date: string | null;
+  seats: number | null;
   name: string;
   email: string;
   phone: string | null;
@@ -163,6 +185,7 @@ export type Database = {
       project_milestones: Table<ProjectMilestoneRow>;
       reservations: Table<ReservationRow>;
       requests: Table<RequestRow>;
+      tours: Table<TourRow>;
       admins: Table<{ email: string; created_at: string }>;
       site_stats: Table<SiteStatsRow>;
     };

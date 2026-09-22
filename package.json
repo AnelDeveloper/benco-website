@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "seed:tours": "tsx scripts/seed-tours.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

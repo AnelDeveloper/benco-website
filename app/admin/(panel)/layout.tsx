@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { Building2, Home, LayoutDashboard, BarChart3, LogOut, CalendarDays, Inbox } from 'lucide-react';
+import { Building2, Home, LayoutDashboard, BarChart3, LogOut, CalendarDays, Inbox, Car } from 'lucide-react';
 import { requireAdmin } from '@/lib/auth/admin';
 import { signOut } from '../_actions/auth';
 
@@ -13,6 +13,7 @@ const NAV = [
   { href: '/admin', label: 'Pregled', icon: LayoutDashboard },
   { href: '/admin/properties', label: 'Nekretnine', icon: Home },
   { href: '/admin/projects', label: 'Projekti', icon: Building2 },
+  { href: '/admin/tours', label: 'Ture', icon: Car },
   { href: '/admin/reservations', label: 'Rezervacije', icon: CalendarDays },
   { href: '/admin/requests', label: 'Upiti', icon: Inbox },
   { href: '/admin/stats', label: 'Statistika', icon: BarChart3 },

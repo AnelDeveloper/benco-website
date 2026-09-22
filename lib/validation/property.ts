@@ -116,6 +116,26 @@ const projectSchema = z.object({
   sort_order: numberOrZero,
 });
 
+const tourSchema = z.object({
+  title_bs: z.string().trim().min(1, 'Naziv na bosanskom je obavezan'),
+  title_en: z.string().trim().min(1, 'Naziv na engleskom je obavezan'),
+  blurb_bs: optionalText,
+  blurb_en: optionalText,
+  duration_hours: optionalNumber,
+  distance_km: optionalNumber,
+  price_per_person: optionalNumber,
+  currency,
+  cover_url: optionalText,
+  max_seats: z.preprocess(
+    (v) => (v === '' || v === undefined || v === null ? 6 : v),
+    z.coerce.number().int().min(1, 'Najmanje jedno mjesto').max(12, 'Najviše 12 mjesta'),
+  ),
+  is_published: checkbox,
+  sort_order: numberOrZero,
+});
+
+export type TourInput = z.infer<typeof tourSchema>;
+
 function parse<T>(schema: z.ZodType<T>, formData: FormData): ParseResult<T> {
   const raw = Object.fromEntries(formData.entries());
   const result = schema.safeParse(raw);
@@ -135,3 +155,4 @@ export type ProjectInput = z.infer<typeof projectSchema>;
 
 export const parsePropertyForm = (formData: FormData) => parse(propertySchema, formData);
 export const parseProjectForm = (formData: FormData) => parse(projectSchema, formData);
+export const parseTourForm = (formData: FormData) => parse(tourSchema, formData);

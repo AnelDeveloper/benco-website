@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parsePropertyForm, parseProjectForm } from './property';
+import { parsePropertyForm, parseProjectForm, parseTourForm } from './property';
 
 function form(fields: Record<string, string>): FormData {
   const fd = new FormData();
@@ -107,5 +107,38 @@ describe('parseProjectForm', () => {
 
   it('rejects an unknown status', () => {
     expect(parseProjectForm(form({ ...validProject, status: 'demolished' })).ok).toBe(false);
+  });
+});
+
+const validTour = {
+  title_bs: 'Jahorina',
+  title_en: 'Jahorina',
+  duration_hours: '8',
+  distance_km: '60',
+  price_per_person: '90',
+};
+
+describe('parseTourForm', () => {
+  it('accepts a valid tour', () => {
+    expect(parseTourForm(form(validTour)).ok).toBe(true);
+  });
+
+  it('defaults max seats to six', () => {
+    const result = parseTourForm(form(validTour));
+    expect(result.ok && result.data.max_seats).toBe(6);
+  });
+
+  it('rejects an empty title', () => {
+    expect(parseTourForm(form({ ...validTour, title_bs: '' })).ok).toBe(false);
+  });
+
+  it('rejects more than twelve seats', () => {
+    expect(parseTourForm(form({ ...validTour, max_seats: '20' })).ok).toBe(false);
+  });
+
+  it('coerces numeric strings', () => {
+    const result = parseTourForm(form(validTour));
+    expect(result.ok && result.data.duration_hours).toBe(8);
+    expect(result.ok && result.data.price_per_person).toBe(90);
   });
 });

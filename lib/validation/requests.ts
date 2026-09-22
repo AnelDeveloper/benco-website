@@ -36,9 +36,12 @@ export type BookingInput = z.infer<typeof bookingSchema>;
  */
 export const requestSchema = z
   .object({
-    kind: z.enum(['purchase', 'offplan', 'investment']),
+    kind: z.enum(['purchase', 'offplan', 'investment', 'tour']),
     propertyId: z.string().uuid().optional().nullable(),
     projectId: z.string().uuid().optional().nullable(),
+    tourId: z.string().uuid().optional().nullable(),
+    tourDate: isoDate.optional().nullable(),
+    seats: z.coerce.number().int().min(1).max(12).optional().nullable(),
     name,
     email,
     phone,
@@ -52,6 +55,14 @@ export const requestSchema = z
     }
     if ((data.kind === 'offplan' || data.kind === 'investment') && !data.projectId) {
       ctx.addIssue({ code: 'custom', path: ['projectId'], message: 'Nedostaje projekat' });
+    }
+    if (data.kind === 'tour') {
+      if (!data.tourId) {
+        ctx.addIssue({ code: 'custom', path: ['tourId'], message: 'Nedostaje tura' });
+      }
+      if (!data.tourDate) {
+        ctx.addIssue({ code: 'custom', path: ['tourDate'], message: 'Odaberite datum ture' });
+      }
     }
   });
 
