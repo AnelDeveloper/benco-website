@@ -98,3 +98,102 @@ export async function getFeaturedProperties(
 
   return (data as PropertyCardRow[]).map((row) => toPropertyCard(row, locale));
 }
+
+export type PropertyDetail = PropertyCard & {
+  description: string;
+  address: string | null;
+  features: string[];
+  maxGuests: number | null;
+  images: { url: string; alt: string }[];
+};
+
+const DETAIL_COLUMNS = `
+  id, slug, title_bs, title_en, description_bs, description_en,
+  property_type, listing_mode, location, address,
+  price, price_per_night, currency, area_m2, bedrooms, bathrooms, max_guests,
+  features, property_images (url, alt_bs, alt_en, sort_order)
+`;
+
+export type PropertyFilters = {
+  type?: string;
+  mode?: string;
+  location?: string;
+};
+
+/** All published properties, optionally filtered. Never throws. */
+export async function getPublishedProperties(
+  locale: Locale,
+  filters: PropertyFilters = {},
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  client: any = createAnonClient(),
+): Promise<PropertyCard[]> {
+  if (!client) return [];
+
+  let query = client
+    .from('properties')
+    .select(CARD_COLUMNS)
+    .eq('is_published', true)
+    .order('sort_order', { ascending: true });
+
+  if (filters.type) query = query.eq('property_type', filters.type);
+  if (filters.location) query = query.eq('location', filters.location);
+  if (filters.mode === 'rent') query = query.in('listing_mode', ['rent', 'both']);
+  if (filters.mode === 'sale') query = query.in('listing_mode', ['sale', 'both']);
+
+  const { data, error } = await query;
+
+  if (error || !data) {
+    if (error) console.error('getPublishedProperties failed:', error);
+    return [];
+  }
+
+  return (data as PropertyCardRow[]).map((row) => toPropertyCard(row, locale));
+}
+
+export async function getPropertyBySlug(
+  slug: string,
+  locale: Locale,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  client: any = createAnonClient(),
+): Promise<PropertyDetail | null> {
+  if (!client) return null;
+
+  const { data, error } = await client
+    .from('properties')
+    .select(DETAIL_COLUMNS)
+    .eq('slug', slug)
+    .eq('is_published', true)
+    .maybeSingle();
+
+  if (error || !data) return null;
+
+  const row = data as PropertyCardRow & {
+    address: string | null;
+    features: string[] | null;
+    max_guests: number | null;
+  };
+  const card = toPropertyCard(row, locale);
+  const images = [...(row.property_images ?? [])]
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map((image) => ({ url: image.url, alt: localized(image, 'alt', locale) || card.title }));
+
+  return {
+    ...card,
+    description: localized(row, 'description', locale),
+    address: row.address,
+    features: row.features ?? [],
+    maxGuests: row.max_guests,
+    images,
+  };
+}
+
+/** Distinct locations across published properties, for the filter control. */
+export async function getPropertyLocations(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  client: any = createAnonClient(),
+): Promise<string[]> {
+  if (!client) return [];
+  const { data } = await client.from('properties').select('location').eq('is_published', true);
+  const locations = new Set<string>((data ?? []).map((row: { location: string }) => row.location));
+  return [...locations].sort();
+}

@@ -1,7 +1,17 @@
 import { z } from 'zod';
 
 const name = z.string().trim().min(1, 'Ime je obavezno').max(120);
-const email = z.string().trim().email('Unesite ispravnu email adresu').max(200);
+/**
+ * Lowercased after validation so the rate limiter cannot be sidestepped by
+ * varying capitalisation — Amir@x.com and amir@x.com are one person, and the
+ * stored value must match what the limiter counts.
+ */
+const email = z
+  .string()
+  .trim()
+  .max(200)
+  .email('Unesite ispravnu email adresu')
+  .transform((value) => value.toLowerCase());
 const phone = z.string().trim().max(50).optional().nullable();
 const message = z.string().trim().max(2000).optional().nullable();
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Neispravan datum');

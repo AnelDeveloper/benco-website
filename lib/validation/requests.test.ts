@@ -93,3 +93,17 @@ describe('requestSchema', () => {
     expect(requestSchema.safeParse({ ...validRequest, kind: 'donation' }).success).toBe(false);
   });
 });
+
+describe('email normalization', () => {
+  it('lowercases the email so the rate limiter sees one identity', () => {
+    const result = bookingSchema.safeParse({ ...validBooking, email: 'Amir.K@Example.COM' });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.email).toBe('amir.k@example.com');
+  });
+
+  it('trims surrounding whitespace', () => {
+    const result = requestSchema.safeParse({ ...validRequest, email: '  Lejla@Example.com ' });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.email).toBe('lejla@example.com');
+  });
+});
