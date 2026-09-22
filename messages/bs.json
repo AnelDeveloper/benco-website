@@ -3,7 +3,8 @@
     "home": "Početna",
     "properties": "Nekretnine",
     "about": "O nama",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "invest": "Investiraj"
   },
   "hero": {
     "title": "Vaš partner za nekretnine i gradnju",
@@ -37,7 +38,8 @@
     "locations": {
       "sarajevo": "Sarajevo",
       "jahorina": "Jahorina"
-    }
+    },
+    "empty": "Uskoro objavljujemo nove nekretnine. Kontaktirajte nas za trenutnu ponudu."
   },
   "about": {
     "title": "O nama",
@@ -80,5 +82,104 @@
     "contactInfo": "Kontakt informacije",
     "followUs": "Pratite nas",
     "copyright": "© 2026 Ben&Co. Sva prava zadržana."
+  },
+  "propertiesPage": {
+    "title": "Nekretnine",
+    "subtitle": "Pregledajte našu kompletnu ponudu",
+    "empty": "Trenutno nema nekretnina koje odgovaraju vašem izboru.",
+    "all": "Sve",
+    "filterType": "Tip",
+    "filterMode": "Namjena",
+    "filterLocation": "Lokacija",
+    "forSale": "Na prodaju",
+    "forRent": "Za najam",
+    "count": "nekretnina",
+    "back": "Nazad na nekretnine"
+  },
+  "propertyDetail": {
+    "features": "Sadržaji",
+    "bedrooms": "Spavaće sobe",
+    "bathrooms": "Kupatila",
+    "area": "Površina",
+    "maxGuests": "Max. gostiju",
+    "address": "Adresa",
+    "price": "Cijena",
+    "perNight": "/ noć",
+    "notFound": "Nekretnina nije pronađena.",
+    "gallery": "Galerija"
+  },
+  "booking": {
+    "title": "Rezerviši termin",
+    "subtitle": "Odaberite datume dolaska i odlaska.",
+    "name": "Ime i prezime",
+    "email": "Email",
+    "phone": "Telefon",
+    "guests": "Broj gostiju",
+    "message": "Poruka (opcionalno)",
+    "submit": "Rezerviši",
+    "submitting": "Rezervacija u toku…",
+    "nights": "noći",
+    "total": "Ukupno",
+    "pickDates": "Molimo odaberite datume.",
+    "successTitle": "Rezervacija potvrđena!",
+    "successBody": "Termin je rezervisan za vas. Poslali smo vam potvrdu na email.",
+    "perNight": "po noći"
+  },
+  "purchase": {
+    "title": "Pošalji ponudu",
+    "subtitle": "Zainteresovani ste za kupovinu? Javite nam se.",
+    "amount": "Vaša ponuda",
+    "submit": "Pošalji ponudu"
+  },
+  "invest": {
+    "title": "Investiraj i gradi",
+    "subtitle": "Uložite u projekte u izgradnji ili kupite stan prije završetka.",
+    "empty": "Trenutno nema aktivnih projekata.",
+    "progress": "Napredak izgradnje",
+    "completion": "Očekivani završetak",
+    "started": "Početak",
+    "units": "Ukupno stanova",
+    "available": "Dostupno",
+    "pricePerM2": "Cijena po m²",
+    "minInvestment": "Minimalno ulaganje",
+    "expectedReturn": "Očekivani povrat",
+    "funded": "Prikupljeno",
+    "goal": "Cilj",
+    "milestones": "Faze izgradnje",
+    "offplanCta": "Kupi u izgradnji",
+    "investCta": "Investiraj",
+    "offplanTitle": "Kupovina u izgradnji",
+    "offplanSubtitle": "Rezervišite stan po povoljnijoj cijeni prije završetka.",
+    "investTitle": "Ulaganje u projekat",
+    "investSubtitle": "Uložite u izgradnju i ostvarite povrat.",
+    "units_label": "Broj stanova",
+    "amount": "Iznos ulaganja",
+    "statusPlanning": "U pripremi",
+    "statusUnderConstruction": "U izgradnji",
+    "statusCompleted": "Završeno",
+    "viewProject": "Pogledaj projekat",
+    "notFound": "Projekat nije pronađen.",
+    "back": "Nazad na projekte"
+  },
+  "requestForm": {
+    "name": "Ime i prezime",
+    "email": "Email",
+    "phone": "Telefon",
+    "message": "Poruka",
+    "submit": "Pošalji",
+    "submitting": "Slanje…",
+    "successTitle": "Upit poslan!",
+    "successBody": "Javljamo vam se u najkraćem roku.",
+    "error": "Greška pri slanju. Pokušajte ponovo."
+  },
+  "buildSection": {
+    "title": "Investiramo i gradimo",
+    "subtitle": "Pratite kako nastaje vaš budući dom.",
+    "projectsCompleted": "Završenih projekata",
+    "sqmDelivered": "Izgrađenih m²",
+    "investors": "Zadovoljnih investitora",
+    "yearsExperience": "Godina iskustva",
+    "cta": "Pogledaj projekte",
+    "scrollHint": "Skrolajte da vidite izgradnju"
   }
 }

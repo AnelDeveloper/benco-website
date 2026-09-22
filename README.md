@@ -4,6 +4,10 @@ Modern, SEO-optimized website for Ben&Co real estate and construction company in
 
 ## Features
 
+- 🔐 **Admin panel** - Manage properties, projects and photos at `/admin`
+- 📅 **Instant booking** - Guests book apartments; dates lock immediately
+- 🏗️ **Investment projects** - Buy off-plan or invest, with construction progress
+- ✨ **Scroll animation** - A building that constructs itself as visitors scroll
 - 🌍 **Bilingual Support** - Bosnian and English
 - 🎨 **Modern Design** - Professional real estate design with smooth animations
 - 📱 **Fully Responsive** - Works perfectly on all devices
@@ -28,12 +32,40 @@ Modern, SEO-optimized website for Ben&Co real estate and construction company in
 npm install
 ```
 
-2. Run the development server:
+2. Copy `.env.example` to `.env.local` and fill in the Supabase keys.
+   See `supabase/README.md` for creating the project and applying the schema.
+
+3. Seed the starting data (once):
+```bash
+npm run seed
+```
+
+4. Run the development server:
 ```bash
 npm run dev
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open [http://localhost:3000](http://localhost:3000). The admin panel is at
+   [/admin](http://localhost:3000/admin).
+
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm test` | Run the test suite |
+| `npm run seed` | Load the starting properties and example project |
+
+## How it fits together
+
+- **Public pages** read published rows through the anon key, which row-level
+  security limits to reading published data and nothing else.
+- **Every write** runs server-side with the service-role key, after the admin
+  session has been verified. That key never reaches the browser.
+- **Double booking is impossible**: a Postgres exclusion constraint refuses
+  overlapping stays, so two people clicking at the same moment cannot both win.
+- **Docs**: design spec and phase plans live in `docs/superpowers/`.
 
 ## Building for Production
 

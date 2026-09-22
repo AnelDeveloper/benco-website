@@ -1,29 +1,49 @@
 import { MetadataRoute } from 'next';
+import { createAnonClient } from '@/lib/supabase/anon';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://benco.ba';
-  const locales = ['bs', 'en'];
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://benco.ba';
+const LOCALES = ['bs', 'en'] as const;
 
-  const routes = ['', '/properties', '/about', '/contact'];
+function urlFor(locale: string, path: string) {
+  return `${BASE_URL}${locale === 'bs' ? '' : `/${locale}`}${path}`;
+}
 
-  const sitemapEntries: MetadataRoute.Sitemap = [];
+function entry(path: string, priority: number, changeFrequency: 'daily' | 'weekly' | 'monthly') {
+  return LOCALES.map((locale) => ({
+    url: urlFor(locale, path),
+    lastModified: new Date(),
+    changeFrequency,
+    priority,
+    alternates: {
+      languages: {
+        bs: urlFor('bs', path),
+        en: urlFor('en', path),
+      },
+    },
+  }));
+}
 
-  locales.forEach((locale) => {
-    routes.forEach((route) => {
-      sitemapEntries.push({
-        url: `${baseUrl}${locale === 'bs' ? '' : `/${locale}`}${route}`,
-        lastModified: new Date(),
-        changeFrequency: 'weekly',
-        priority: route === '' ? 1 : 0.8,
-        alternates: {
-          languages: {
-            bs: `${baseUrl}${route}`,
-            en: `${baseUrl}/en${route}`,
-          },
-        },
-      });
-    });
-  });
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const staticEntries = [
+    ...entry('', 1, 'weekly'),
+    ...entry('/properties', 0.9, 'daily'),
+    ...entry('/invest', 0.9, 'weekly'),
+  ];
 
-  return sitemapEntries;
+  // Published listings are part of the sitemap; a missing Supabase config must
+  // still produce a valid sitemap rather than failing the build.
+  const supabase = createAnonClient();
+  if (!supabase) return staticEntries;
+
+  const [properties, projects] = await Promise.all([
+    supabase.from('properties').select('slug').eq('is_published', true),
+    supabase.from('projects').select('slug').eq('is_published', true),
+  ]);
+
+  const dynamicEntries = [
+    ...(properties.data ?? []).flatMap((row) => entry(`/properties/${row.slug}`, 0.8, 'weekly')),
+    ...(projects.data ?? []).flatMap((row) => entry(`/invest/${row.slug}`, 0.8, 'weekly')),
+  ];
+
+  return [...staticEntries, ...dynamicEntries];
 }
