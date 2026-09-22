@@ -89,10 +89,16 @@ export type SiteStatsRow = {
   updated_at: string;
 };
 
+/**
+ * `Relationships` is required by postgrest-js's GenericTable constraint. Omit it
+ * and the schema silently fails the constraint, which makes every insert payload
+ * resolve to `never` — an error that surfaces far from its cause.
+ */
 type Table<Row> = {
   Row: Row;
   Insert: Partial<Row>;
   Update: Partial<Row>;
+  Relationships: [];
 };
 
 export type Database = {
