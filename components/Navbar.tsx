@@ -31,16 +31,24 @@ export function Navbar() {
   };
 
   const navLinks = [
-    { href: '#home', label: t('home') },
-    { href: '#properties', label: t('properties') },
-    { href: '#about', label: t('about') },
-    { href: '#contact', label: t('contact') },
+    { href: '/', label: t('home') },
+    { href: '/properties', label: t('properties') },
+    { href: '/invest', label: t('invest') },
+    { href: '/#about', label: t('about') },
+    { href: '/#contact', label: t('contact') },
   ];
+
+  /**
+   * The transparent bar only works over the homepage hero. Every other page
+   * starts on a light background, where white-on-white text disappears, so the
+   * bar is solid everywhere except an unscrolled homepage.
+   */
+  const solid = isScrolled || pathname !== '/';
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+        solid
           ? 'bg-white/95 backdrop-blur-md shadow-lg'
           : 'bg-transparent'
       }`}
@@ -50,7 +58,7 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className={`relative transition-all duration-300 ${
-              isScrolled ? 'w-10 h-10' : 'w-12 h-12'
+              solid ? 'w-10 h-10' : 'w-12 h-12'
             }`}>
               <Image
                 src="/benco-logo.jpg"
@@ -61,7 +69,7 @@ export function Navbar() {
               />
             </div>
             <span className={`text-2xl md:text-3xl font-bold transition-all duration-300 ${
-              isScrolled ? 'text-black' : 'text-white'
+              solid ? 'text-black' : 'text-white'
             }`}>
               BEN<span className="text-gold-500">&</span>CO
             </span>
@@ -70,24 +78,24 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 className={`font-medium transition-colors relative group ${
-                  isScrolled ? 'text-gray-700 hover:text-gold-600' : 'text-white hover:text-gold-400'
+                  solid ? 'text-gray-700 hover:text-gold-600' : 'text-white hover:text-gold-400'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {link.label}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-600 group-hover:w-full transition-all duration-300"></span>
-              </a>
+              </Link>
             ))}
             
             <button
               onClick={toggleLanguage}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 font-medium ${
-                isScrolled 
-                  ? 'bg-gray-100 text-gray-700 hover:bg-gold-600 hover:text-white' 
+                solid
+                  ? 'bg-gray-100 text-gray-700 hover:bg-gold-600 hover:text-white'
                   : 'bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-gold-600 hover:border-gold-600'
               }`}
             >
@@ -101,7 +109,7 @@ export function Navbar() {
             <button
               onClick={toggleLanguage}
               className={`p-2 rounded-lg transition-colors ${
-                isScrolled
+                solid
                   ? 'bg-gray-100 text-gray-700 hover:bg-gold-600 hover:text-white'
                   : 'bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-gold-600'
               }`}
@@ -110,7 +118,8 @@ export function Navbar() {
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              aria-label="Meni"
+              className={`p-2 rounded-lg transition-colors ${solid ? 'text-gray-800 hover:bg-gray-100' : 'text-white hover:bg-white/20'}`}
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -123,14 +132,14 @@ export function Navbar() {
         <div className="md:hidden bg-white border-t border-gray-200">
           <div className="px-4 py-6 space-y-4">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 className="block text-gray-700 hover:text-gold-600 font-medium py-2 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </div>
         </div>
