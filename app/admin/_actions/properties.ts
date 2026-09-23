@@ -141,10 +141,3 @@ export async function deleteProperty(id: string) {
   revalidatePublic();
   redirect('/admin/properties');
 }
-
-export async function togglePublished(id: string, next: boolean) {
-  await requireAdmin();
-  const db = createAdminClient();
-  await db.from('properties').update({ is_published: next }).eq('id', id);
-  revalidatePublic();
-}
