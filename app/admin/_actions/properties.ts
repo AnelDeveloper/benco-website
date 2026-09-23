@@ -38,9 +38,13 @@ function submittedValues(formData: FormData): Record<string, string> {
  * Server actions run outside the render pass, so Next has no way to know which
  * cached pages a write invalidates unless we say so.
  */
-function revalidatePublic() {
+function revalidatePublic(id?: string) {
   revalidatePath('/', 'layout');
   revalidatePath('/admin/properties');
+  // The edit page too: a server action re-renders the page it was called
+  // from, and without this the form falls back to the values the page was
+  // built with — showing the old title straight after a successful save.
+  if (id) revalidatePath(`/admin/properties/${id}`);
 }
 
 /** Slugs must be unique; append -2, -3 … until one is free. */
@@ -116,7 +120,7 @@ export async function updateProperty(
     };
   }
 
-  revalidatePublic();
+  revalidatePublic(id);
   return { errors: {}, message: 'Sačuvano.', values: null };
 }
 

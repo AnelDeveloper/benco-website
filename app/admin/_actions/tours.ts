@@ -18,9 +18,10 @@ function submittedValues(formData: FormData): Record<string, string> {
   return values;
 }
 
-function revalidatePublic() {
+function revalidatePublic(id?: string) {
   revalidatePath('/', 'layout');
   revalidatePath('/admin/tours');
+  if (id) revalidatePath(`/admin/tours/${id}`);
 }
 
 async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
@@ -75,7 +76,7 @@ export async function updateTour(id: string, _prev: FormState, formData: FormDat
     return { errors: {}, message: `Greška pri spremanju: ${error.message}`, values: submittedValues(formData) };
   }
 
-  revalidatePublic();
+  revalidatePublic(id);
   return { errors: {}, message: 'Sačuvano.', values: null };
 }
 

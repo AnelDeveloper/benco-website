@@ -18,9 +18,10 @@ function submittedValues(formData: FormData): Record<string, string> {
   return values;
 }
 
-function revalidatePublic() {
+function revalidatePublic(id?: string) {
   revalidatePath('/', 'layout');
   revalidatePath('/admin/projects');
+  if (id) revalidatePath(`/admin/projects/${id}`);
 }
 
 async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
@@ -83,7 +84,7 @@ export async function updateProject(
     return { errors: {}, message: `Greška pri spremanju: ${error.message}`, values: submittedValues(formData) };
   }
 
-  revalidatePublic();
+  revalidatePublic(id);
   return { errors: {}, message: 'Sačuvano.', values: null };
 }
 
@@ -132,22 +133,28 @@ export async function addMilestone(projectId: string, formData: FormData) {
     sort_order: (last?.[0]?.sort_order ?? 0) + 1,
   });
 
-  revalidatePublic();
+  revalidatePublic(projectId);
 }
 
 export async function toggleMilestone(id: string, next: boolean) {
   await requireAdmin();
   const db = createAdminClient();
+
+  const { data } = await db.from('project_milestones').select('project_id').eq('id', id).maybeSingle();
   await db
     .from('project_milestones')
     .update({ is_done: next, completed_at: next ? new Date().toISOString().slice(0, 10) : null })
     .eq('id', id);
-  revalidatePublic();
+
+  revalidatePublic(data?.project_id);
 }
 
 export async function deleteMilestone(id: string) {
   await requireAdmin();
   const db = createAdminClient();
+
+  const { data } = await db.from('project_milestones').select('project_id').eq('id', id).maybeSingle();
   await db.from('project_milestones').delete().eq('id', id);
-  revalidatePublic();
+
+  revalidatePublic(data?.project_id);
 }

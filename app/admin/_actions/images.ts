@@ -19,9 +19,19 @@ import { storagePathFor, isAllowedImage } from '@/lib/storage';
 export type ImageKind = 'property' | 'project';
 
 const CONFIG = {
-  property: { bucket: 'property-images', table: 'property_images', fk: 'property_id' },
-  project: { bucket: 'project-images', table: 'project_images', fk: 'project_id' },
+  property: { bucket: 'property-images', table: 'property_images', fk: 'property_id', adminPath: 'properties' },
+  project: { bucket: 'project-images', table: 'project_images', fk: 'project_id', adminPath: 'projects' },
 } as const;
+
+/**
+ * Refresh the public site and the edit page the upload happened on. Without
+ * the second path the photo grid re-renders from the data the page was built
+ * with, so a freshly uploaded photo does not appear until a manual reload.
+ */
+function revalidateFor(kind: ImageKind, ownerId?: string) {
+  revalidatePath('/', 'layout');
+  if (ownerId) revalidatePath(`/admin/${CONFIG[kind].adminPath}/${ownerId}`);
+}
 
 export type UploadState = { error: string | null; uploaded: number };
 
@@ -82,23 +92,27 @@ export async function uploadImages(
     uploaded += 1;
   }
 
-  revalidatePath('/', 'layout');
+  revalidateFor(kind, ownerId);
   return { error: null, uploaded };
 }
 
 export async function deleteImage(kind: ImageKind, imageId: string) {
   await requireAdmin();
-  const { bucket, table } = CONFIG[kind];
+  const { bucket, table, fk } = CONFIG[kind];
   const db = imageDb();
 
-  const { data: image } = await db.from(table).select('url').eq('id', imageId).single();
+  const { data: image } = await db.from(table).select(`url, ${fk}`).eq('id', imageId).single();
 
   if (image?.url?.includes(`/${bucket}/`)) {
     await db.storage.from(bucket).remove([image.url.split(`/${bucket}/`)[1]]);
   }
 
   await db.from(table).delete().eq('id', imageId);
-  revalidatePath('/', 'layout');
+
+  // `fk` is chosen at runtime, so the row's shape is a union here; read the
+  // owner id through an index signature rather than widening the query type.
+  const ownerId = (image as Record<string, string> | null)?.[fk];
+  revalidateFor(kind, ownerId);
 }
 
 /** Swap two images' positions. Reordering the cover is the common case. */
@@ -130,5 +144,5 @@ export async function moveImage(kind: ImageKind, imageId: string, direction: 'up
   await db.from(table).update({ sort_order: neighbour.sort_order }).eq('id', current.id);
   await db.from(table).update({ sort_order: current.sort_order }).eq('id', neighbour.id);
 
-  revalidatePath('/', 'layout');
+  revalidateFor(kind, owner as string);
 }

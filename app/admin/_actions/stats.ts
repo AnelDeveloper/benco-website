@@ -30,6 +30,10 @@ export async function updateStats(_prev: StatsState, formData: FormData): Promis
 
   if (error) return { message: `Greška: ${error.message}`, error: true };
 
+  // The public site AND this page: without the second call the form
+  // re-renders from stale server data and snaps back to the old numbers,
+  // which reads as "it didn't save" even though it did.
   revalidatePath('/', 'layout');
+  revalidatePath('/admin/stats');
   return { message: 'Sačuvano.', error: false };
 }
