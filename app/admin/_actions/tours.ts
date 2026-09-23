@@ -77,7 +77,9 @@ export async function updateTour(id: string, _prev: FormState, formData: FormDat
   }
 
   revalidatePublic(id);
-  return { errors: {}, message: 'Sačuvano.', values: null };
+  // Not null: React ignores a changed defaultValue on a mounted input, so the
+  // form must re-seed from what was actually saved or it shows the old values.
+  return { errors: {}, message: 'Sačuvano.', values: submittedValues(formData) };
 }
 
 export async function deleteTour(id: string) {

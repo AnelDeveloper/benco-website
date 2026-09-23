@@ -17,7 +17,11 @@ export function StatsForm({
   const [state, formAction] = useActionState<StatsState, FormData>(updateStats, {
     message: null,
     error: false,
+    values: null,
   });
+
+  /** Prefer what the action just confirmed, then the value the page loaded with. */
+  const v = (name: keyof typeof stats) => state.values?.[name] ?? stats[name];
 
   return (
     <form action={formAction} className="space-y-4 rounded-xl border border-slate-200 bg-white p-5">
@@ -32,10 +36,10 @@ export function StatsForm({
       )}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field name="projects_completed" label="Završenih projekata" type="number" min={0} defaultValue={stats.projects_completed} />
-        <Field name="sqm_delivered" label="Izgrađeno m²" type="number" min={0} defaultValue={stats.sqm_delivered} />
-        <Field name="investors_count" label="Broj investitora" type="number" min={0} defaultValue={stats.investors_count} />
-        <Field name="years_experience" label="Godina iskustva" type="number" min={0} defaultValue={stats.years_experience} />
+        <Field name="projects_completed" label="Završenih projekata" type="number" min={0} defaultValue={v('projects_completed')} />
+        <Field name="sqm_delivered" label="Izgrađeno m²" type="number" min={0} defaultValue={v('sqm_delivered')} />
+        <Field name="investors_count" label="Broj investitora" type="number" min={0} defaultValue={v('investors_count')} />
+        <Field name="years_experience" label="Godina iskustva" type="number" min={0} defaultValue={v('years_experience')} />
       </div>
 
       <SubmitButton />
