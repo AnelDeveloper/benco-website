@@ -102,9 +102,13 @@ export default async function ReservationsPage() {
                   )}
                 </div>
 
-                <div className="flex flex-col items-end gap-2">
+                {/* Full width on a phone so Otkaži is an easy target, and
+                    back to a right-aligned column from sm upwards. */}
+                <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:items-end">
                   {reservation.total_price !== null && (
-                    <span className="text-lg font-bold text-slate-900">{reservation.total_price} BAM</span>
+                    <span className="text-lg font-bold text-slate-900 sm:text-right">
+                      {reservation.total_price} BAM
+                    </span>
                   )}
                   <DeleteButton
                     action={cancelReservation.bind(null, reservation.id)}

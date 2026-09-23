@@ -47,11 +47,11 @@ export function RequestCard({
           )}
         </div>
 
-        <div className="flex flex-col items-end gap-2">
-          <span className="text-xs text-slate-400">
+        <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:items-end">
+          <span className="text-xs text-slate-400 sm:text-right">
             {formatDate(request.created_at)}
           </span>
-          <div className="flex flex-wrap justify-end gap-1.5">
+          <div className="flex flex-wrap gap-1.5 sm:justify-end">
             {(Object.keys(statusLabels) as RequestStatus[])
               .filter((status) => status !== request.status)
               .map((status) => (
@@ -68,7 +68,7 @@ export function RequestCard({
           <button
             type="button"
             onClick={() => setNotesOpen((open) => !open)}
-            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800"
+            className="flex min-h-9 items-center gap-1 text-xs text-slate-500 hover:text-slate-800 sm:justify-end"
           >
             <StickyNote size={13} /> Bilješka
           </button>
