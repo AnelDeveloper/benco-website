@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { createAnonClient } from '@/lib/supabase/anon';
+import { SITE_URL as BASE_URL } from '@/lib/site';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://benco.ba';
 const LOCALES = ['bs', 'en'] as const;
 
 function urlFor(locale: string, path: string) {

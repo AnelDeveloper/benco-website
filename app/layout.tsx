@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
+import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +22,7 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://benco.ba'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'Ben&Co - Real Estate & Construction Company',
     template: '%s | Ben&Co'
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'bs_BA',
     alternateLocale: 'en_US',
-    url: 'https://benco.ba',
+    url: SITE_URL,
     siteName: 'Ben&Co',
     title: 'Ben&Co - Real Estate & Construction Company',
     description: 'Vodeća kompanija za nekretnine i gradnju u Sarajevu',
