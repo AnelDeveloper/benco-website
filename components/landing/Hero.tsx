@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { BedDouble, Building2, Car, ArrowRight } from 'lucide-react';
 import { Display, Kicker } from './Display';
+import { HeroBackdrop } from './HeroBackdrop';
 import { useDrawer, type DrawerItem } from './DrawerContext';
 
 export type HeroStay = DrawerItem & { location: string; propertyType: string };
@@ -36,19 +36,10 @@ export function Hero({
   const t = useTranslations('landing.hero');
   const { open } = useDrawer();
   const [tab, setTab] = useState<Tab>('stay');
-  const [scale, setScale] = useState(1);
 
   const [where, setWhere] = useState('');
   const [type, setType] = useState('');
   const [tourId, setTourId] = useState(tours[0]?.id ?? '');
-
-  useEffect(() => {
-    // Gentle parallax: the cap keeps the crop from drifting far enough to
-    // reveal the image edges on tall screens.
-    const onScroll = () => setScale(1 + Math.min(0.12, window.scrollY / 6000));
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   const locations = [...new Set(stays.map((s) => s.location))];
 
@@ -77,16 +68,7 @@ export function Hero({
 
   return (
     <section id="top" className="relative flex min-h-screen items-end overflow-hidden bg-ink">
-      <Image
-        src="/images/properties/Vila sa jezerom 1.avif"
-        alt=""
-        fill
-        priority
-        className="object-cover transition-transform duration-100 ease-linear"
-        style={{ transform: `scale(${scale})` }}
-        sizes="100vw"
-      />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,18,32,.55)_0%,rgba(11,18,32,.15)_40%,rgba(11,18,32,.85)_100%)]" />
+      <HeroBackdrop />
 
       <div className="relative z-[2] mx-auto w-full max-w-container px-6 pb-14 pt-[140px]">
         <Kicker className="mb-[18px] animate-rise text-gold-accent">{t('kicker')}</Kicker>

@@ -64,3 +64,55 @@ html {
 .animate-fade-in {
   animation: fade-in 0.6s ease-out forwards;
 }
+
+/* ---------------------------------------------------------------------------
+   Hero backdrop
+   Large blurred colour fields drift slowly behind the hero, and the blueprint
+   outline draws itself once on load. Everything is CSS so it runs without
+   JavaScript; the reduced-motion block below freezes it for anyone who asks.
+   --------------------------------------------------------------------------- */
+
+@keyframes drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(6%, -4%, 0) scale(1.15); }
+}
+
+@keyframes drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+  50%      { transform: translate3d(-7%, 5%, 0) scale(0.95); }
+}
+
+@keyframes drift-c {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(0.95); }
+  50%      { transform: translate3d(4%, 6%, 0) scale(1.2); }
+}
+
+@keyframes draw-line {
+  from { stroke-dashoffset: var(--dash); }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes sweep {
+  0%   { opacity: 0; transform: translateY(0); }
+  35%  { opacity: 0.5; }
+  100% { opacity: 0; transform: translateY(-120px); }
+}
+
+.hero-blob {
+  animation-duration: 26s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.hero-draw {
+  stroke-dasharray: var(--dash);
+  stroke-dashoffset: var(--dash);
+  animation: draw-line 2.4s cubic-bezier(.2, .7, .2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-blob { animation: none; }
+  .hero-draw { stroke-dashoffset: 0; animation: none; }
+  .hero-sweep { display: none; }
+}
