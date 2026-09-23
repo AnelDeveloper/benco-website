@@ -14,7 +14,7 @@ function UploadButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-60"
+      className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-60 sm:w-auto"
     >
       <Upload size={16} /> {pending ? 'Upload u toku…' : 'Dodaj slike'}
     </button>
@@ -65,13 +65,13 @@ export function ImageManager({
                   </span>
                 )}
               </div>
-              <div className="flex items-center justify-between gap-1 border-t border-slate-200 p-1.5">
+              <div className="flex items-stretch gap-1 border-t border-slate-200 p-1">
                 <form action={moveImage.bind(null, kind, image.id, 'up')}>
                   <button
                     type="submit"
                     disabled={index === 0}
                     aria-label="Pomjeri lijevo"
-                    className="rounded p-1 text-slate-600 hover:bg-slate-100 disabled:opacity-30"
+                    className="flex h-11 flex-1 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 disabled:opacity-30"
                   >
                     <ArrowLeft size={15} />
                   </button>
@@ -81,7 +81,7 @@ export function ImageManager({
                     type="submit"
                     disabled={index === sorted.length - 1}
                     aria-label="Pomjeri desno"
-                    className="rounded p-1 text-slate-600 hover:bg-slate-100 disabled:opacity-30"
+                    className="flex h-11 flex-1 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 disabled:opacity-30"
                   >
                     <ArrowRight size={15} />
                   </button>
@@ -90,7 +90,7 @@ export function ImageManager({
                   <button
                     type="submit"
                     aria-label="Obriši sliku"
-                    className="rounded p-1 text-red-600 hover:bg-red-50"
+                    className="flex h-11 flex-1 items-center justify-center rounded-lg text-red-600 hover:bg-red-50"
                   >
                     <Trash2 size={15} />
                   </button>

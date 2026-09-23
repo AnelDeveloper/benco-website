@@ -58,7 +58,7 @@ export function RequestCard({
                 <form key={status} action={setRequestStatus.bind(null, request.id, status)}>
                   <button
                     type="submit"
-                    className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs text-slate-700 transition hover:bg-slate-100"
+                    className="min-h-9 rounded-lg border border-slate-200 px-3 text-xs text-slate-700 transition hover:bg-slate-100"
                   >
                     {statusLabels[status]}
                   </button>
@@ -82,11 +82,11 @@ export function RequestCard({
             defaultValue={request.admin_notes ?? ''}
             rows={2}
             placeholder="Privatna bilješka — ne vidi je klijent."
-            className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="w-full flex-1 rounded-lg border border-slate-300 px-3 py-2 text-base md:text-sm"
           />
           <button
             type="submit"
-            className="self-start rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+            className="min-h-12 w-full self-start rounded-lg bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-700 sm:w-auto"
           >
             Sačuvaj
           </button>

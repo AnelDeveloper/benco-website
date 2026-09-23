@@ -111,7 +111,12 @@ export function PropertyForm({
         </div>
       </section>
 
-      <SubmitButton>{submitLabel ?? 'Sačuvaj'}</SubmitButton>
+      {/* On a phone the property form is several screens long; keeping Save
+          in reach means no scrolling to the bottom to commit a one-word edit.
+          It sits above the tab bar, and returns to normal flow on desktop. */}
+      <div className="sticky bottom-[76px] z-10 -mx-4 border-t border-slate-200 bg-white/95 px-4 py-3 backdrop-blur-md md:static md:mx-0 md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none">
+        <SubmitButton>{submitLabel ?? 'Sačuvaj'}</SubmitButton>
+      </div>
     </form>
   );
 }

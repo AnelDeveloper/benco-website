@@ -38,8 +38,8 @@ export function MilestoneEditor({
                   aria-label={milestone.is_done ? 'Označi kao nezavršeno' : 'Označi kao završeno'}
                   className={
                     milestone.is_done
-                      ? 'flex h-6 w-6 items-center justify-center rounded-full bg-green-600 text-white'
-                      : 'flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 text-slate-400 hover:border-gold-500'
+                      ? 'flex h-11 w-11 items-center justify-center rounded-full bg-green-600 text-white'
+                      : 'flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 text-slate-400 hover:border-gold-500'
                   }
                 >
                   {milestone.is_done ? <Check size={14} /> : <Circle size={10} />}
@@ -55,7 +55,7 @@ export function MilestoneEditor({
               </span>
 
               <form action={deleteMilestone.bind(null, milestone.id)}>
-                <button type="submit" aria-label="Obriši fazu" className="rounded p-1.5 text-red-600 hover:bg-red-50">
+                <button type="submit" aria-label="Obriši fazu" className="flex h-11 w-11 items-center justify-center rounded-lg text-red-600 hover:bg-red-50">
                   <Trash2 size={15} />
                 </button>
               </form>
@@ -65,12 +65,12 @@ export function MilestoneEditor({
       )}
 
       <form action={add} className="grid gap-2 sm:grid-cols-[1fr_1fr_150px_auto]">
-        <input name="title_bs" placeholder="Naziv faze (BS)" required className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-        <input name="title_en" placeholder="Naziv faze (EN)" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-        <input name="target_date" type="date" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+        <input name="title_bs" placeholder="Naziv faze (BS)" required className="min-h-12 rounded-lg border border-slate-300 px-3 py-2 text-base md:text-sm" />
+        <input name="title_en" placeholder="Naziv faze (EN)" className="min-h-12 rounded-lg border border-slate-300 px-3 py-2 text-base md:text-sm" />
+        <input name="target_date" type="date" className="min-h-12 rounded-lg border border-slate-300 px-3 py-2 text-base md:text-sm" />
         <button
           type="submit"
-          className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+          className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-lg bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-700"
         >
           <Plus size={15} /> Dodaj
         </button>

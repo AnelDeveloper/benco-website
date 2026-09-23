@@ -2,8 +2,13 @@
 
 import { useFormStatus } from 'react-dom';
 
+/**
+ * `text-base` is not decoration: Safari on iOS zooms the whole page in when a
+ * focused input is under 16px, and the reader then has to pinch back out after
+ * every field. min-h-12 keeps the tap area comfortable on a phone.
+ */
 const inputClass =
-  'w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/25 disabled:bg-slate-50';
+  'w-full min-h-12 rounded-lg border border-slate-300 px-3 py-2 text-base text-slate-900 outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/25 disabled:bg-slate-50 md:min-h-0 md:text-[15px]';
 
 export function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -123,7 +128,7 @@ export function CheckboxField({
         type="checkbox"
         name={name}
         defaultChecked={defaultChecked}
-        className="mt-0.5 h-4 w-4 rounded border-slate-300 text-gold-600 focus:ring-gold-500"
+        className="mt-0.5 h-5 w-5 rounded border-slate-300 text-gold-600 focus:ring-gold-500"
       />
       <span>
         <span className="block text-sm font-medium text-slate-800">{label}</span>
@@ -139,7 +144,7 @@ export function SubmitButton({ children = 'Sačuvaj' }: { children?: React.React
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-gold-600 px-5 py-2.5 font-semibold text-white transition hover:bg-gold-500 disabled:cursor-not-allowed disabled:opacity-60"
+      className="min-h-12 w-full rounded-lg bg-gold-600 px-5 font-semibold text-white transition hover:bg-gold-500 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
     >
       {pending ? 'Čuvanje…' : children}
     </button>

@@ -22,7 +22,7 @@ export default async function ToursPage() {
         </div>
         <Link
           href="/admin/tours/new"
-          className="inline-flex items-center gap-2 rounded-lg bg-gold-600 px-4 py-2.5 font-semibold text-white transition hover:bg-gold-500"
+          className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-gold-600 px-4 font-semibold text-white transition hover:bg-gold-500"
         >
           <Plus size={18} /> Dodaj turu
         </Link>

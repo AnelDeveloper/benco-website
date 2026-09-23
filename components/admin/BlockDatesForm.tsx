@@ -13,7 +13,7 @@ export function BlockDatesForm({ properties }: { properties: { id: string; title
 
   if (properties.length === 0) return null;
 
-  const inputClass = 'rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900';
+  const inputClass = 'min-h-12 rounded-lg border border-slate-300 px-3 py-2 text-base text-slate-900 md:text-sm';
 
   return (
     <form action={formAction} className="rounded-xl border border-slate-200 bg-white p-5">

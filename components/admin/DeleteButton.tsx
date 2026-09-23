@@ -23,7 +23,7 @@ export function DeleteButton({
       <button
         type="button"
         onClick={() => setArmed(true)}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+        className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-red-200 px-4 text-sm font-medium text-red-600 transition hover:bg-red-50"
       >
         <Trash2 size={15} /> {label}
       </button>
@@ -35,7 +35,7 @@ export function DeleteButton({
       <form action={action}>
         <button
           type="submit"
-          className="rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-500"
+          className="min-h-11 rounded-lg bg-red-600 px-4 text-sm font-semibold text-white transition hover:bg-red-500"
         >
           {confirmLabel}
         </button>
@@ -43,7 +43,7 @@ export function DeleteButton({
       <button
         type="button"
         onClick={() => setArmed(false)}
-        className="rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-100"
+        className="min-h-11 rounded-lg px-4 text-sm text-slate-600 hover:bg-slate-100"
       >
         Odustani
       </button>

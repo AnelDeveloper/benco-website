@@ -53,7 +53,7 @@ export default async function DashboardPage() {
           <p className="text-slate-600">Još nema nekretnina.</p>
           <Link
             href="/admin/properties/new"
-            className="mt-3 inline-flex items-center gap-2 rounded-lg bg-gold-600 px-4 py-2 font-medium text-white transition hover:bg-gold-500"
+            className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-lg bg-gold-600 px-4 font-medium text-white transition hover:bg-gold-500"
           >
             <Plus size={17} /> Dodaj prvu nekretninu
           </Link>
