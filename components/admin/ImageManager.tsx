@@ -1,22 +1,24 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useRef, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import { ArrowLeft, ArrowRight, Trash2, Upload } from 'lucide-react';
 import { uploadImages, deleteImage, moveImage, type ImageKind, type UploadState } from '@/app/admin/_actions/images';
+import { compressImage } from '@/lib/image-compress';
 
 type ImageItem = { id: string; url: string; sort_order: number };
 
-function UploadButton() {
+function UploadButton({ preparing }: { preparing: boolean }) {
   const { pending } = useFormStatus();
+  const busy = pending || preparing;
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={busy}
       className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-60 sm:w-auto"
     >
-      <Upload size={16} /> {pending ? 'Upload u toku…' : 'Dodaj slike'}
+      <Upload size={16} /> {preparing ? 'Priprema slika…' : pending ? 'Upload u toku…' : 'Dodaj slike'}
     </button>
   );
 }
@@ -35,6 +37,38 @@ export function ImageManager({
     error: null,
     uploaded: 0,
   });
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [preparing, setPreparing] = useState(false);
+  const [saved, setSaved] = useState<string | null>(null);
+
+  /**
+   * Shrink each photo in the browser, then hand the smaller files to the
+   * server action. A phone photo is 3-5 MB; uploading that over mobile data is
+   * slow and fills the storage quota quickly, so the resize happens before a
+   * single byte leaves the device.
+   */
+  async function prepareAndSubmit(formData: FormData) {
+    const chosen = formData.getAll('files').filter((f): f is File => f instanceof File && f.size > 0);
+    if (chosen.length === 0) return formAction(formData);
+
+    setPreparing(true);
+    setSaved(null);
+
+    const before = chosen.reduce((sum, f) => sum + f.size, 0);
+    const compressed = await Promise.all(chosen.map(compressImage));
+    const after = compressed.reduce((sum, f) => sum + f.size, 0);
+
+    const next = new FormData();
+    for (const file of compressed) next.append('files', file);
+
+    const pct = before > 0 ? Math.round((1 - after / before) * 100) : 0;
+    setSaved(pct > 2 ? `${(before / 1048576).toFixed(1)} MB → ${(after / 1048576).toFixed(1)} MB (−${pct}%)` : null);
+
+    setPreparing(false);
+    if (inputRef.current) inputRef.current.value = '';
+    return formAction(next);
+  }
 
   const sorted = [...images].sort((a, b) => a.sort_order - b.sort_order);
 
@@ -101,16 +135,24 @@ export function ImageManager({
         </ul>
       )}
 
-      <form action={formAction} className="flex flex-wrap items-center gap-3">
+      <form action={prepareAndSubmit} className="flex flex-wrap items-center gap-3">
         <input
+          ref={inputRef}
           type="file"
           name="files"
           multiple
-          accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
-          className="text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-200"
+          accept="image/*"
+          className="w-full text-sm text-slate-600 file:mr-3 file:min-h-11 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-200 sm:w-auto"
         />
-        <UploadButton />
+        <UploadButton preparing={preparing} />
       </form>
+
+      {saved && (
+        <p className="mt-2 text-xs text-green-700">Slike smanjene prije slanja: {saved}</p>
+      )}
+      <p className="mt-2 text-xs text-slate-500">
+        Slike se automatski smanjuju na najviše 2200 px prije slanja, da ne troše prostor i podatke.
+      </p>
     </section>
   );
 }
