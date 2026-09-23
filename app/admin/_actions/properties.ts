@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { parsePropertyForm } from '@/lib/validation/property';
 import { slugify } from '@/lib/slug';
@@ -61,7 +61,7 @@ async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
 }
 
 export async function createProperty(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireContentAdmin();
 
   const parsed = parsePropertyForm(formData);
   if (!parsed.ok) {
@@ -98,7 +98,7 @@ export async function updateProperty(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  await requireAdmin();
+  await requireContentAdmin();
 
   const parsed = parsePropertyForm(formData);
   if (!parsed.ok) {
@@ -127,7 +127,7 @@ export async function updateProperty(
 }
 
 export async function deleteProperty(id: string) {
-  await requireAdmin();
+  await requireContentAdmin();
 
   const db = createAdminClient();
   // Remove stored photos first; the rows cascade with the property.

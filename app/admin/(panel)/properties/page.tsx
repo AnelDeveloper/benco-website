@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Plus, Pencil, ImageOff } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { listPropertiesForAdmin, coverOf } from '@/lib/data/admin-properties';
 
 export const dynamic = 'force-dynamic';
@@ -14,7 +14,7 @@ const MODE_LABEL: Record<string, string> = {
 };
 
 export default async function PropertiesPage() {
-  await requireAdmin();
+  await requireContentAdmin();
   const properties = await listPropertiesForAdmin();
 
   return (

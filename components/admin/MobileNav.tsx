@@ -5,22 +5,24 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   LayoutDashboard, Home, CalendarDays, Inbox, MoreHorizontal,
-  Building2, Car, BarChart3, LogOut, X,
+  Building2, Car, BarChart3, LogOut, X, Users,
 } from 'lucide-react';
+import { CAN, ROLE_LABEL, type Role } from '@/lib/auth/roles';
 
 /** The five screens that earn a permanent spot under the thumb. */
 const TABS = [
-  { href: '/admin', label: 'Pregled', icon: LayoutDashboard, exact: true },
-  { href: '/admin/properties', label: 'Nekretnine', icon: Home },
-  { href: '/admin/reservations', label: 'Rezervacije', icon: CalendarDays },
-  { href: '/admin/requests', label: 'Upiti', icon: Inbox },
-];
+  { href: '/admin', label: 'Pregled', icon: LayoutDashboard, exact: true, needs: null },
+  { href: '/admin/properties', label: 'Nekretnine', icon: Home, exact: false, needs: 'content' },
+  { href: '/admin/reservations', label: 'Rezervacije', icon: CalendarDays, exact: false, needs: 'customers' },
+  { href: '/admin/requests', label: 'Upiti', icon: Inbox, exact: false, needs: 'customers' },
+] as const;
 
 const MORE = [
-  { href: '/admin/projects', label: 'Projekti', icon: Building2 },
-  { href: '/admin/tours', label: 'Ture autom', icon: Car },
-  { href: '/admin/stats', label: 'Statistika', icon: BarChart3 },
-];
+  { href: '/admin/projects', label: 'Projekti', icon: Building2, needs: 'content' },
+  { href: '/admin/tours', label: 'Ture autom', icon: Car, needs: 'content' },
+  { href: '/admin/stats', label: 'Statistika', icon: BarChart3, needs: 'content' },
+  { href: '/admin/users', label: 'Korisnici', icon: Users, needs: 'users' },
+] as const;
 
 function isActive(pathname: string, href: string, exact?: boolean) {
   return exact ? pathname === href : pathname.startsWith(href);
@@ -28,18 +30,23 @@ function isActive(pathname: string, href: string, exact?: boolean) {
 
 export function MobileNav({
   email,
+  role,
   signOut,
 }: {
   email: string;
+  role: Role;
   signOut: () => Promise<void>;
 }) {
   const pathname = usePathname();
+  const can = CAN[role];
+  const tabs = TABS.filter((item) => !item.needs || can[item.needs]);
+  const more = MORE.filter((item) => can[item.needs]);
   const [sheetOpen, setSheetOpen] = useState(false);
 
   // Close the sheet when navigating, or it stays open over the new page.
   useEffect(() => setSheetOpen(false), [pathname]);
 
-  const moreActive = MORE.some((item) => pathname.startsWith(item.href));
+  const moreActive = more.some((item) => pathname.startsWith(item.href));
 
   return (
     <>
@@ -54,7 +61,10 @@ export function MobileNav({
 
           <div className="absolute inset-x-0 bottom-0 rounded-t-2xl bg-white pb-[env(safe-area-inset-bottom)] shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-              <p className="truncate text-sm text-slate-500">{email}</p>
+              <div className="min-w-0">
+                <p className="truncate text-sm text-slate-700">{email}</p>
+                <p className="text-xs text-gold-600">{ROLE_LABEL[role]}</p>
+              </div>
               <button
                 type="button"
                 onClick={() => setSheetOpen(false)}
@@ -66,7 +76,7 @@ export function MobileNav({
             </div>
 
             <nav className="p-2">
-              {MORE.map(({ href, label, icon: Icon }) => (
+              {more.map(({ href, label, icon: Icon }) => (
                 <Link
                   key={href}
                   href={href}
@@ -92,8 +102,8 @@ export function MobileNav({
       )}
 
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)] md:hidden">
-        <div className="grid grid-cols-5">
-          {TABS.map(({ href, label, icon: Icon, exact }) => {
+        <div className="grid" style={{ gridTemplateColumns: `repeat(${tabs.length + 1}, minmax(0, 1fr))` }}>
+          {tabs.map(({ href, label, icon: Icon, exact }) => {
             const active = isActive(pathname, href, exact);
             return (
               <Link

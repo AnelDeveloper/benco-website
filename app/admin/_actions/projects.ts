@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { parseProjectForm } from '@/lib/validation/property';
 import { slugify } from '@/lib/slug';
@@ -37,7 +37,7 @@ async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
 }
 
 export async function createProject(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireContentAdmin();
 
   const parsed = parseProjectForm(formData);
   if (!parsed.ok) {
@@ -70,7 +70,7 @@ export async function updateProject(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  await requireAdmin();
+  await requireContentAdmin();
 
   const parsed = parseProjectForm(formData);
   if (!parsed.ok) {
@@ -91,7 +91,7 @@ export async function updateProject(
 }
 
 export async function deleteProject(id: string) {
-  await requireAdmin();
+  await requireContentAdmin();
   const db = createAdminClient();
 
   const { data: images } = await db.from('project_images').select('url').eq('project_id', id);
@@ -110,7 +110,7 @@ export async function deleteProject(id: string) {
 // --- Milestones -------------------------------------------------------------
 
 export async function addMilestone(projectId: string, formData: FormData) {
-  await requireAdmin();
+  await requireContentAdmin();
   const db = createAdminClient();
 
   const title_bs = String(formData.get('title_bs') ?? '').trim();
@@ -139,7 +139,7 @@ export async function addMilestone(projectId: string, formData: FormData) {
 }
 
 export async function toggleMilestone(id: string, next: boolean) {
-  await requireAdmin();
+  await requireContentAdmin();
   const db = createAdminClient();
 
   const { data } = await db.from('project_milestones').select('project_id').eq('id', id).maybeSingle();
@@ -152,7 +152,7 @@ export async function toggleMilestone(id: string, next: boolean) {
 }
 
 export async function deleteMilestone(id: string) {
-  await requireAdmin();
+  await requireContentAdmin();
   const db = createAdminClient();
 
   const { data } = await db.from('project_milestones').select('project_id').eq('id', id).maybeSingle();

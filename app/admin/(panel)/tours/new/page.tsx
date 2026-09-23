@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { TourForm } from '@/components/admin/TourForm';
 import { createTour } from '@/app/admin/_actions/tours';
 
 export default async function NewTourPage() {
-  await requireAdmin();
+  await requireContentAdmin();
   return (
     <div className="max-w-4xl">
       <Link href="/admin/tours" className="mb-4 inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900">

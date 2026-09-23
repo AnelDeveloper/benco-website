@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createAdminClient } from '@/lib/supabase/admin';
 
@@ -41,7 +41,7 @@ export async function uploadImages(
   _prev: UploadState,
   formData: FormData,
 ): Promise<UploadState> {
-  await requireAdmin();
+  await requireContentAdmin();
 
   const { bucket, table, fk } = CONFIG[kind];
   const files = formData.getAll('files').filter((f): f is File => f instanceof File && f.size > 0);
@@ -97,7 +97,7 @@ export async function uploadImages(
 }
 
 export async function deleteImage(kind: ImageKind, imageId: string) {
-  await requireAdmin();
+  await requireContentAdmin();
   const { bucket, table, fk } = CONFIG[kind];
   const db = imageDb();
 
@@ -117,7 +117,7 @@ export async function deleteImage(kind: ImageKind, imageId: string) {
 
 /** Swap two images' positions. Reordering the cover is the common case. */
 export async function moveImage(kind: ImageKind, imageId: string, direction: 'up' | 'down') {
-  await requireAdmin();
+  await requireContentAdmin();
   const { table, fk } = CONFIG[kind];
   const db = imageDb();
 

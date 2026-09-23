@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Plus, Pencil, ImageOff } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { TourRow } from '@/lib/supabase/types';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ToursPage() {
-  await requireAdmin();
+  await requireContentAdmin();
   const db = createAdminClient();
   const { data } = await db.from('tours').select('*').order('sort_order');
   const tours = (data ?? []) as TourRow[];

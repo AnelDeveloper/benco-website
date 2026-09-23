@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 /**
@@ -26,7 +26,7 @@ const FIELDS = [
 ] as const;
 
 export async function updateStats(_prev: StatsState, formData: FormData): Promise<StatsState> {
-  await requireAdmin();
+  await requireContentAdmin();
 
   const values: Record<string, number> = {};
   for (const field of FIELDS) {

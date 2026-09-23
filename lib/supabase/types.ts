@@ -154,6 +154,16 @@ export type RequestRow = {
   updated_at: string;
 };
 
+export type AppRole = 'user' | 'support' | 'admin';
+
+export type AppUserRow = {
+  email: string;
+  role: AppRole;
+  name: string | null;
+  created_by: string | null;
+  created_at: string;
+};
+
 export type SiteStatsRow = {
   id: boolean;
   projects_completed: number;
@@ -186,7 +196,7 @@ export type Database = {
       reservations: Table<ReservationRow>;
       requests: Table<RequestRow>;
       tours: Table<TourRow>;
-      admins: Table<{ email: string; created_at: string }>;
+      app_users: Table<AppUserRow>;
       site_stats: Table<SiteStatsRow>;
     };
     Views: Record<string, never>;

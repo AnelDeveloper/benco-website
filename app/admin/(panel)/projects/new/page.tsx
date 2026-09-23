@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { ProjectForm } from '@/components/admin/ProjectForm';
 import { createProject } from '@/app/admin/_actions/projects';
 
 export default async function NewProjectPage() {
-  await requireAdmin();
+  await requireContentAdmin();
   return (
     <div className="max-w-4xl">
       <Link href="/admin/projects" className="mb-4 inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900">

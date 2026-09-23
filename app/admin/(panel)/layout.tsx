@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { Building2, Home, LayoutDashboard, BarChart3, LogOut, CalendarDays, Inbox, Car } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { Building2, Home, LayoutDashboard, BarChart3, LogOut, CalendarDays, Inbox, Car, Users } from 'lucide-react';
+import { requireAdmin, CAN, ROLE_LABEL } from '@/lib/auth/admin';
 import { MobileNav } from '@/components/admin/MobileNav';
 import { signOut } from '../_actions/auth';
 
@@ -10,18 +10,22 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/** `needs` decides who sees the link; the pages enforce it again server-side. */
 const NAV = [
-  { href: '/admin', label: 'Pregled', icon: LayoutDashboard },
-  { href: '/admin/properties', label: 'Nekretnine', icon: Home },
-  { href: '/admin/projects', label: 'Projekti', icon: Building2 },
-  { href: '/admin/tours', label: 'Ture', icon: Car },
-  { href: '/admin/reservations', label: 'Rezervacije', icon: CalendarDays },
-  { href: '/admin/requests', label: 'Upiti', icon: Inbox },
-  { href: '/admin/stats', label: 'Statistika', icon: BarChart3 },
-];
+  { href: '/admin', label: 'Pregled', icon: LayoutDashboard, needs: null },
+  { href: '/admin/properties', label: 'Nekretnine', icon: Home, needs: 'content' },
+  { href: '/admin/projects', label: 'Projekti', icon: Building2, needs: 'content' },
+  { href: '/admin/tours', label: 'Ture', icon: Car, needs: 'content' },
+  { href: '/admin/reservations', label: 'Rezervacije', icon: CalendarDays, needs: 'customers' },
+  { href: '/admin/requests', label: 'Upiti', icon: Inbox, needs: 'customers' },
+  { href: '/admin/stats', label: 'Statistika', icon: BarChart3, needs: 'content' },
+  { href: '/admin/users', label: 'Korisnici', icon: Users, needs: 'users' },
+] as const;
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const admin = await requireAdmin();
+  const can = CAN[admin.role];
+  const nav = NAV.filter((item) => !item.needs || can[item.needs]);
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -35,7 +39,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
           </div>
 
           <nav className="flex flex-col gap-1 p-3">
-            {NAV.map(({ href, label, icon: Icon }) => (
+            {nav.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
                 href={href}
@@ -48,7 +52,8 @@ export default async function PanelLayout({ children }: { children: React.ReactN
           </nav>
 
           <div className="mt-auto border-t border-slate-800 p-3">
-            <p className="truncate px-3 pb-2 text-xs text-slate-500">{admin.email}</p>
+            <p className="truncate px-3 text-xs text-slate-500">{admin.email}</p>
+            <p className="px-3 pb-2 text-xs text-gold-500">{ROLE_LABEL[admin.role]}</p>
             <form action={signOut}>
               <button
                 type="submit"
@@ -74,7 +79,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
         </div>
       </div>
 
-      <MobileNav email={admin.email} signOut={signOut} />
+      <MobileNav email={admin.email} role={admin.role} signOut={signOut} />
     </div>
   );
 }

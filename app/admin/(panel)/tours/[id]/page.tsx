@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { TourForm } from '@/components/admin/TourForm';
 import { DeleteButton } from '@/components/admin/DeleteButton';
@@ -10,7 +10,7 @@ import { updateTour, deleteTour } from '@/app/admin/_actions/tours';
 export const dynamic = 'force-dynamic';
 
 export default async function EditTourPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
+  await requireContentAdmin();
   const { id } = await params;
 
   const db = createAdminClient();

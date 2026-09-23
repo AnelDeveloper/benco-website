@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Mail, Phone, Banknote, Home, Building2, Car, CalendarDays, Users } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireStaff } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { RequestCard } from '@/components/admin/RequestCard';
 import { formatNumber } from '@/lib/format';
@@ -27,7 +27,7 @@ export default async function RequestsPage({
 }: {
   searchParams: Promise<{ kind?: string; status?: string }>;
 }) {
-  await requireAdmin();
+  await requireStaff();
   const filters = await searchParams;
   const db = createAdminClient();
 

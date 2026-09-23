@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { PropertyForm } from '@/components/admin/PropertyForm';
 import { createProperty } from '@/app/admin/_actions/properties';
 
 export default async function NewPropertyPage() {
-  await requireAdmin();
+  await requireContentAdmin();
 
   return (
     <div className="max-w-4xl">

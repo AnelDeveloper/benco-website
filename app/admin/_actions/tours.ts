@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { parseTourForm } from '@/lib/validation/property';
 import { slugify } from '@/lib/slug';
@@ -37,7 +37,7 @@ async function uniqueSlug(base: string, excludeId?: string): Promise<string> {
 }
 
 export async function createTour(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireContentAdmin();
 
   const parsed = parseTourForm(formData);
   if (!parsed.ok) {
@@ -62,7 +62,7 @@ export async function createTour(_prev: FormState, formData: FormData): Promise<
 }
 
 export async function updateTour(id: string, _prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
+  await requireContentAdmin();
 
   const parsed = parseTourForm(formData);
   if (!parsed.ok) {
@@ -83,7 +83,7 @@ export async function updateTour(id: string, _prev: FormState, formData: FormDat
 }
 
 export async function deleteTour(id: string) {
-  await requireAdmin();
+  await requireContentAdmin();
   const db = createAdminClient();
   await db.from('tours').delete().eq('id', id);
   revalidatePublic();

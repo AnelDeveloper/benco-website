@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { ProjectForm } from '@/components/admin/ProjectForm';
 import { MilestoneEditor } from '@/components/admin/MilestoneEditor';
@@ -13,7 +13,7 @@ import type { ProjectMilestoneRow, ProjectImageRow } from '@/lib/supabase/types'
 export const dynamic = 'force-dynamic';
 
 export default async function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
+  await requireContentAdmin();
   const { id } = await params;
 
   const db = createAdminClient();

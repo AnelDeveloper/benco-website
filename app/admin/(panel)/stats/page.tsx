@@ -1,11 +1,11 @@
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { StatsForm } from '@/components/admin/StatsForm';
 
 export const dynamic = 'force-dynamic';
 
 export default async function StatsPage() {
-  await requireAdmin();
+  await requireContentAdmin();
   const db = createAdminClient();
   const { data } = await db.from('site_stats').select('*').maybeSingle();
 

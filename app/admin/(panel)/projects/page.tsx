@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Plus, Pencil } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +12,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export default async function ProjectsPage() {
-  await requireAdmin();
+  await requireContentAdmin();
   const db = createAdminClient();
   const { data } = await db.from('projects').select('*').order('sort_order');
   const projects = data ?? [];

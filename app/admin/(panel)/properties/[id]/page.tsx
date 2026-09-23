@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireContentAdmin } from '@/lib/auth/admin';
 import { getPropertyForAdmin } from '@/lib/data/admin-properties';
 import { PropertyForm } from '@/components/admin/PropertyForm';
 import { DeleteButton } from '@/components/admin/DeleteButton';
@@ -11,7 +11,7 @@ import { updateProperty, deleteProperty } from '@/app/admin/_actions/properties'
 export const dynamic = 'force-dynamic';
 
 export default async function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
+  await requireContentAdmin();
   const { id } = await params;
   const property = await getPropertyForAdmin(id);
   if (!property) notFound();

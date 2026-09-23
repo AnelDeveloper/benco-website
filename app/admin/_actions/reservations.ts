@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireStaff } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { toDateRange, validateStay } from '@/lib/booking';
 
@@ -13,7 +13,7 @@ export type BlockState = { error: string | null; message: string | null };
  * immediately while the record of who booked them is kept.
  */
 export async function cancelReservation(id: string) {
-  await requireAdmin();
+  await requireStaff();
   const db = createAdminClient();
 
   await db
@@ -29,7 +29,7 @@ export async function blockDates(
   _prev: BlockState,
   formData: FormData,
 ): Promise<BlockState> {
-  await requireAdmin();
+  await requireStaff();
 
   const propertyId = String(formData.get('property_id') ?? '');
   const from = String(formData.get('from') ?? '');

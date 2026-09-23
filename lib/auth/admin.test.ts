@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { isAdminEmail } from './admin';
+import { CAN } from './roles';
 
 describe('isAdminEmail', () => {
   it('accepts an exact match', () => {
@@ -37,5 +38,27 @@ describe('isAdminEmail', () => {
 
   it('does not match on a substring', () => {
     expect(isAdminEmail('evil-a@b.com', 'a@b.com')).toBe(false);
+  });
+});
+
+describe('CAN — what each role may reach', () => {
+  it('gives admin everything', () => {
+    expect(CAN.admin).toEqual({ content: true, customers: true, users: true });
+  });
+
+  it('limits support to customers', () => {
+    expect(CAN.support.customers).toBe(true);
+    expect(CAN.support.content).toBe(false);
+    expect(CAN.support.users).toBe(false);
+  });
+
+  it('gives a parked user nothing', () => {
+    expect(CAN.user).toEqual({ content: false, customers: false, users: false });
+  });
+
+  it('never lets a non-admin manage users', () => {
+    for (const role of ['user', 'support'] as const) {
+      expect(CAN[role].users).toBe(false);
+    }
   });
 });

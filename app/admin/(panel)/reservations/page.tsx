@@ -1,5 +1,5 @@
 import { CalendarDays, Mail, Phone, Users, Ban } from 'lucide-react';
-import { requireAdmin } from '@/lib/auth/admin';
+import { requireStaff } from '@/lib/auth/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { DeleteButton } from '@/components/admin/DeleteButton';
 import { BlockDatesForm } from '@/components/admin/BlockDatesForm';
@@ -17,7 +17,7 @@ function formatPeriod(period: string): string {
 }
 
 export default async function ReservationsPage() {
-  await requireAdmin();
+  await requireStaff();
   const db = createAdminClient();
 
   const [reservationResult, propertyResult] = await Promise.all([
