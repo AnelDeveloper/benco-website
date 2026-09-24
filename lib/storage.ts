@@ -2,12 +2,21 @@ import { slugify } from './slug';
 
 export const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
+/**
+ * What may be stored. HEIC is included because an iPhone produces it by
+ * default and the picker offers it — rejecting it server-side left people
+ * unable to upload their own photos. The browser converts HEIC to WebP before
+ * sending whenever it can decode it, so this is the fallback path.
+ */
 const ALLOWED_TYPES = [
   'image/jpeg',
+  'image/jpg',
   'image/png',
   'image/webp',
   'image/avif',
   'image/gif',
+  'image/heic',
+  'image/heif',
 ];
 
 export function isAllowedImage(mimeType: string, size: number): boolean {

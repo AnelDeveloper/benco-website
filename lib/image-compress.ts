@@ -10,6 +10,13 @@
 export const MAX_EDGE = 2200;
 export const QUALITY = 0.82;
 
+/** Formats every browser can display. Anything else must be converted first. */
+const WEB_SAFE = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
+
+export function isWebSafe(mimeType: string): boolean {
+  return WEB_SAFE.includes(mimeType.toLowerCase());
+}
+
 /** Scale to fit inside a square of `max`, never enlarging a smaller image. */
 export function fitWithin(
   width: number,

@@ -5,7 +5,7 @@ import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import { ArrowLeft, ArrowRight, Trash2, Upload } from 'lucide-react';
 import { uploadImages, deleteImage, moveImage, type ImageKind, type UploadState } from '@/app/admin/_actions/images';
-import { compressImage } from '@/lib/image-compress';
+import { compressImage, isWebSafe } from '@/lib/image-compress';
 
 type ImageItem = { id: string; url: string; sort_order: number };
 
@@ -41,6 +41,7 @@ export function ImageManager({
   const inputRef = useRef<HTMLInputElement>(null);
   const [preparing, setPreparing] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
 
   /**
    * Shrink each photo in the browser, then hand the smaller files to the
@@ -54,6 +55,7 @@ export function ImageManager({
 
     setPreparing(true);
     setSaved(null);
+    setWarning(null);
 
     const before = chosen.reduce((sum, f) => sum + f.size, 0);
     const compressed = await Promise.all(chosen.map(compressImage));
@@ -64,6 +66,16 @@ export function ImageManager({
 
     const pct = before > 0 ? Math.round((1 - after / before) * 100) : 0;
     setSaved(pct > 2 ? `${(before / 1048576).toFixed(1)} MB → ${(after / 1048576).toFixed(1)} MB (−${pct}%)` : null);
+
+    // Safari can decode HEIC and converts it above; browsers that cannot would
+    // otherwise store a file Chrome and Firefox refuse to show.
+    const unconverted = compressed.filter((file) => !isWebSafe(file.type));
+    if (unconverted.length > 0) {
+      setWarning(
+        `${unconverted.map((f) => f.name).join(', ')} — ovaj format možda neće biti vidljiv u svim ` +
+        `pretraživačima. Na iPhoneu: Postavke → Kamera → Formati → "Najkompatibilnije".`,
+      );
+    }
 
     setPreparing(false);
     if (inputRef.current) inputRef.current.value = '';
@@ -149,6 +161,9 @@ export function ImageManager({
 
       {saved && (
         <p className="mt-2 text-xs text-green-700">Slike smanjene prije slanja: {saved}</p>
+      )}
+      {warning && (
+        <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">{warning}</p>
       )}
       <p className="mt-2 text-xs text-slate-500">
         Slike se automatski smanjuju na najviše 2200 px prije slanja, da ne troše prostor i podatke.

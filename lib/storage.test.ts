@@ -50,3 +50,23 @@ describe('isAllowedImage', () => {
     expect(isAllowedImage('image/jpeg', 0)).toBe(false);
   });
 });
+
+describe('isAllowedImage — formats a phone actually produces', () => {
+  it('accepts an iPhone HEIC photo', () => {
+    expect(isAllowedImage('image/heic', 3_000_000)).toBe(true);
+    expect(isAllowedImage('image/heif', 3_000_000)).toBe(true);
+  });
+
+  it('accepts the jpg spelling some browsers send', () => {
+    expect(isAllowedImage('image/jpg', 1000)).toBe(true);
+  });
+
+  it('is case-insensitive about the type', () => {
+    expect(isAllowedImage('IMAGE/JPEG', 1000)).toBe(true);
+  });
+
+  it('still refuses things that are not images', () => {
+    expect(isAllowedImage('application/pdf', 1000)).toBe(false);
+    expect(isAllowedImage('image/svg+xml', 1000)).toBe(false);
+  });
+})
