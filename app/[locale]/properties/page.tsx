@@ -1,7 +1,7 @@
 import { getTranslations, getLocale } from 'next-intl/server';
 import { Link } from '@/i18n/routing';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
+import { SiteShell } from '@/components/landing/SiteShell';
+import { Footer } from '@/components/landing/Footer';
 import { PropertyCardLink } from '@/components/public/PropertyCard';
 import { getPublishedProperties, getPropertyLocations } from '@/lib/data/properties';
 import type { Locale } from '@/lib/localized';
@@ -26,9 +26,24 @@ export default async function PropertiesPage({
     getPropertyLocations(),
   ]);
 
+  // The nav's "Rezerviši" opens the first place that can actually be booked.
+  const rentable = properties.find((property) => property.listingMode !== 'sale');
+  const bookItem = rentable
+    ? {
+        id: rentable.id,
+        title: rentable.title,
+        subtitle: `${rentable.location}${rentable.pricePerNight ? ` · ${rentable.pricePerNight} ${rentable.currency}` : ''}`,
+        image: rentable.coverImage,
+        currency: rentable.currency,
+        pricePerNight: rentable.pricePerNight,
+        price: rentable.price,
+        maxGuests: rentable.maxGuests,
+      }
+    : null;
+
   const chip = (active: boolean) =>
     `rounded-full px-4 py-2 text-sm font-medium transition ${
-      active ? 'bg-gold-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+      active ? 'bg-gold-deep text-white' : 'bg-white text-ink-2 hover:bg-paper-3 border border-line'
     }`;
 
   const withFilter = (key: string, value?: string) => {
@@ -41,12 +56,13 @@ export default async function PropertiesPage({
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <Navbar />
+    <SiteShell bookItem={bookItem} footer={<Footer />}>
 
-      <section className="bg-slate-900 px-4 pb-14 pt-32 text-center sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-white md:text-5xl">{t('title')}</h1>
-        <p className="mx-auto mt-3 max-w-2xl text-lg text-slate-300">{t('subtitle')}</p>
+      <section className="bg-ink px-6 pb-16 pt-32 text-center">
+        <h1 className="font-display text-[clamp(36px,4.6vw,60px)] font-normal leading-[1.02] tracking-[-0.02em] text-white">
+          {t('title')}
+        </h1>
+        <p className="mx-auto mt-3 max-w-2xl text-lg text-white/70">{t('subtitle')}</p>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -78,10 +94,10 @@ export default async function PropertiesPage({
           )}
         </div>
 
-        <p className="mb-6 text-sm text-gray-600">{properties.length} {t('count')}</p>
+        <p className="mb-6 text-sm text-muted-body">{properties.length} {t('count')}</p>
 
         {properties.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-center text-gray-600">
+          <p className="rounded-card border border-dashed border-line-2 bg-white p-12 text-center text-muted-body">
             {t('empty')}
           </p>
         ) : (
@@ -93,7 +109,6 @@ export default async function PropertiesPage({
         )}
       </section>
 
-      <Footer />
-    </main>
+    </SiteShell>
   );
 }
