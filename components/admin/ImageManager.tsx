@@ -1,24 +1,23 @@
 'use client';
 
-import { useActionState, useRef, useState } from 'react';
-import { useFormStatus } from 'react-dom';
+import { useRef, useState, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ArrowLeft, ArrowRight, Trash2, Upload } from 'lucide-react';
-import { uploadImages, deleteImage, moveImage, type ImageKind, type UploadState } from '@/app/admin/_actions/images';
+import { prepareUploads, saveUploads, deleteImage, moveImage, type ImageKind } from '@/app/admin/_actions/images';
 import { compressImage, isWebSafe } from '@/lib/image-compress';
+import { browserClient } from '@/lib/supabase/browser';
 
 type ImageItem = { id: string; url: string; sort_order: number };
 
-function UploadButton({ preparing }: { preparing: boolean }) {
-  const { pending } = useFormStatus();
-  const busy = pending || preparing;
+function UploadButton({ status }: { status: string | null }) {
   return (
     <button
       type="submit"
-      disabled={busy}
+      disabled={status !== null}
       className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-60 sm:w-auto"
     >
-      <Upload size={16} /> {preparing ? 'Priprema slika…' : pending ? 'Upload u toku…' : 'Dodaj slike'}
+      <Upload size={16} /> {status ?? 'Dodaj slike'}
     </button>
   );
 }
@@ -32,54 +31,94 @@ export function ImageManager({
   kind: ImageKind;
   images: ImageItem[];
 }) {
-  const action = uploadImages.bind(null, kind, ownerId);
-  const [state, formAction] = useActionState<UploadState, FormData>(action, {
-    error: null,
-    uploaded: 0,
-  });
-
   const inputRef = useRef<HTMLInputElement>(null);
-  const [preparing, setPreparing] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
+  const router = useRouter();
 
   /**
-   * Shrink each photo in the browser, then hand the smaller files to the
-   * server action. A phone photo is 3-5 MB; uploading that over mobile data is
-   * slow and fills the storage quota quickly, so the resize happens before a
-   * single byte leaves the device.
+   * Shrink each photo in the browser, then upload it straight to storage.
+   * A phone photo is 3-5 MB; uploading that over mobile data is slow and
+   * fills the storage quota quickly, so the resize happens before a single
+   * byte leaves the device. Files go directly to Supabase rather than through
+   * the server, whose platform caps a request at 4.5 MB.
    */
-  async function prepareAndSubmit(formData: FormData) {
-    const chosen = formData.getAll('files').filter((f): f is File => f instanceof File && f.size > 0);
-    if (chosen.length === 0) return formAction(formData);
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const chosen = Array.from(inputRef.current?.files ?? []).filter((f) => f.size > 0);
 
-    setPreparing(true);
+    setError(null);
     setSaved(null);
     setWarning(null);
-
-    const before = chosen.reduce((sum, f) => sum + f.size, 0);
-    const compressed = await Promise.all(chosen.map(compressImage));
-    const after = compressed.reduce((sum, f) => sum + f.size, 0);
-
-    const next = new FormData();
-    for (const file of compressed) next.append('files', file);
-
-    const pct = before > 0 ? Math.round((1 - after / before) * 100) : 0;
-    setSaved(pct > 2 ? `${(before / 1048576).toFixed(1)} MB → ${(after / 1048576).toFixed(1)} MB (−${pct}%)` : null);
-
-    // Safari can decode HEIC and converts it above; browsers that cannot would
-    // otherwise store a file Chrome and Firefox refuse to show.
-    const unconverted = compressed.filter((file) => !isWebSafe(file.type));
-    if (unconverted.length > 0) {
-      setWarning(
-        `${unconverted.map((f) => f.name).join(', ')} — ovaj format možda neće biti vidljiv u svim ` +
-        `pretraživačima. Na iPhoneu: Postavke → Kamera → Formati → "Najkompatibilnije".`,
-      );
+    if (chosen.length === 0) {
+      setError('Niste odabrali nijednu sliku.');
+      return;
     }
 
-    setPreparing(false);
-    if (inputRef.current) inputRef.current.value = '';
-    return formAction(next);
+    try {
+      setStatus('Priprema slika…');
+      const before = chosen.reduce((sum, f) => sum + f.size, 0);
+      const compressed = await Promise.all(chosen.map(compressImage));
+      const after = compressed.reduce((sum, f) => sum + f.size, 0);
+
+      const pct = before > 0 ? Math.round((1 - after / before) * 100) : 0;
+      setSaved(pct > 2 ? `${(before / 1048576).toFixed(1)} MB → ${(after / 1048576).toFixed(1)} MB (−${pct}%)` : null);
+
+      // Safari can decode HEIC and converts it above; browsers that cannot would
+      // otherwise store a file Chrome and Firefox refuse to show.
+      const unconverted = compressed.filter((file) => !isWebSafe(file.type));
+      if (unconverted.length > 0) {
+        setWarning(
+          `${unconverted.map((f) => f.name).join(', ')} — ovaj format možda neće biti vidljiv u svim ` +
+          `pretraživačima. Na iPhoneu: Postavke → Kamera → Formati → "Najkompatibilnije".`,
+        );
+      }
+
+      const prepared = await prepareUploads(
+        kind,
+        ownerId,
+        compressed.map((f) => ({ name: f.name, type: f.type, size: f.size })),
+      );
+      if ('error' in prepared) {
+        setError(prepared.error);
+        return;
+      }
+
+      let done = 0;
+      setStatus(`Upload 0/${compressed.length}…`);
+      const storage = browserClient().storage.from(prepared.bucket);
+      const results = await Promise.all(
+        prepared.targets.map(async (target, i) => {
+          const { error: uploadError } = await storage.uploadToSignedUrl(target.path, target.token, compressed[i], {
+            contentType: compressed[i].type,
+          });
+          done += 1;
+          setStatus(`Upload ${done}/${compressed.length}…`);
+          return { name: compressed[i].name, path: uploadError ? null : target.path };
+        }),
+      );
+
+      const paths = results.flatMap((r) => (r.path ? [r.path] : []));
+      const failed = results.filter((r) => !r.path).map((r) => r.name);
+
+      setStatus('Spremanje…');
+      const result = await saveUploads(kind, ownerId, paths);
+      if (result.error) setError(result.error);
+      else if (failed.length > 0) setError(`Nije uspio upload: ${failed.join(', ')}. Pokušajte ponovo s tim slikama.`);
+
+      if (inputRef.current) inputRef.current.value = '';
+      // Pick up the revalidated page so the new photos appear in the grid.
+      router.refresh();
+    } catch (e) {
+      // A network drop or an expired session must show a message, not take
+      // the whole admin page down with it.
+      console.error(e);
+      setError('Upload nije uspio. Provjerite internet vezu i pokušajte ponovo.');
+    } finally {
+      setStatus(null);
+    }
   }
 
   const sorted = [...images].sort((a, b) => a.sort_order - b.sort_order);
@@ -91,8 +130,8 @@ export function ImageManager({
         Prva slika je naslovna i prikazuje se na naslovnoj strani.
       </p>
 
-      {state.error && (
-        <p className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>
+      {error && (
+        <p className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
       )}
 
       {sorted.length === 0 ? (
@@ -147,7 +186,7 @@ export function ImageManager({
         </ul>
       )}
 
-      <form action={prepareAndSubmit} className="flex flex-wrap items-center gap-3">
+      <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-3">
         <input
           ref={inputRef}
           type="file"
@@ -156,7 +195,7 @@ export function ImageManager({
           accept="image/*"
           className="w-full text-sm text-slate-600 file:mr-3 file:min-h-11 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-200 sm:w-auto"
         />
-        <UploadButton preparing={preparing} />
+        <UploadButton status={status} />
       </form>
 
       {saved && (

@@ -33,20 +33,64 @@ function revalidateFor(kind: ImageKind, ownerId?: string) {
   if (ownerId) revalidatePath(`/admin/${CONFIG[kind].adminPath}/${ownerId}`);
 }
 
-export type UploadState = { error: string | null; uploaded: number };
+export type UploadRequest = { name: string; type: string; size: number };
+export type UploadTarget = { path: string; token: string };
 
-export async function uploadImages(
+/**
+ * Step 1 of an upload: hand the browser one signed URL per photo.
+ *
+ * Photos no longer pass through this server. Vercel refuses any request body
+ * over 4.5 MB before the function even runs, and seven phone photos in one
+ * form easily exceed that — the browser got an unreadable response and the
+ * whole admin page crashed. The browser now uploads each file straight to
+ * Supabase Storage, so only a few bytes of metadata come through here.
+ */
+export async function prepareUploads(
   kind: ImageKind,
   ownerId: string,
-  _prev: UploadState,
-  formData: FormData,
-): Promise<UploadState> {
+  files: UploadRequest[],
+): Promise<{ error: string } | { bucket: string; targets: UploadTarget[] }> {
+  await requireContentAdmin();
+
+  if (files.length === 0) return { error: 'Niste odabrali nijednu sliku.' };
+
+  for (const file of files) {
+    if (!isAllowedImage(file.type, file.size)) {
+      return { error: `"${file.name}" nije podržana slika ili je veća od 8 MB.` };
+    }
+  }
+
+  const { bucket } = CONFIG[kind];
+  const db = imageDb();
+  const now = Date.now();
+  const targets: UploadTarget[] = [];
+
+  for (const [index, file] of files.entries()) {
+    // Offset the timestamp so two photos with the same name cannot collide.
+    const path = storagePathFor(ownerId, file.name, now + index);
+    const { data, error } = await db.storage.from(bucket).createSignedUploadUrl(path);
+    if (error || !data) return { error: `Greška pri pripremi uploada: ${error?.message ?? 'nepoznato'}` };
+    targets.push({ path: data.path, token: data.token });
+  }
+
+  return { bucket, targets };
+}
+
+/**
+ * Step 2: record the photos the browser finished uploading, in the order
+ * chosen. Only paths inside this owner's folder are accepted, so a tampered
+ * request cannot attach another listing's files.
+ */
+export async function saveUploads(
+  kind: ImageKind,
+  ownerId: string,
+  paths: string[],
+): Promise<{ error: string | null; saved: number }> {
   await requireContentAdmin();
 
   const { bucket, table, fk } = CONFIG[kind];
-  const files = formData.getAll('files').filter((f): f is File => f instanceof File && f.size > 0);
-
-  if (files.length === 0) return { error: 'Niste odabrali nijednu sliku.', uploaded: 0 };
+  const valid = paths.filter((p) => p.startsWith(`${ownerId}/`) && !p.includes('..'));
+  if (valid.length === 0) return { error: null, saved: 0 };
 
   const db = imageDb();
 
@@ -57,43 +101,23 @@ export async function uploadImages(
     .order('sort_order', { ascending: false })
     .limit(1);
 
-  let nextOrder = (existing?.[0]?.sort_order ?? 0) + 1;
-  let uploaded = 0;
+  const first = (existing?.[0]?.sort_order ?? 0) + 1;
+  const rows = valid.map((path, i) => ({
+    [fk]: ownerId,
+    url: db.storage.from(bucket).getPublicUrl(path).data.publicUrl,
+    sort_order: first + i,
+  }));
 
-  for (const file of files) {
-    if (!isAllowedImage(file.type, file.size)) {
-      return {
-        error: `"${file.name}" nije podržana slika ili je veća od 8 MB.`,
-        uploaded,
-      };
-    }
-
-    const path = storagePathFor(ownerId, file.name);
-    const { error: uploadError } = await db.storage
-      .from(bucket)
-      .upload(path, file, { contentType: file.type, upsert: false });
-
-    if (uploadError) return { error: `Greška pri uploadu: ${uploadError.message}`, uploaded };
-
-    const { data: publicUrl } = db.storage.from(bucket).getPublicUrl(path);
-
-    const { error: rowError } = await db
-      .from(table)
-      .insert({ [fk]: ownerId, url: publicUrl.publicUrl, sort_order: nextOrder });
-
-    if (rowError) {
-      // The row is what makes the file visible; a file with no row is invisible
-      // and would leak storage, so remove it rather than leave it orphaned.
-      await db.storage.from(bucket).remove([path]);
-      return { error: `Greška pri spremanju: ${rowError.message}`, uploaded };
-    }
-
-    nextOrder += 1;
-    uploaded += 1;
+  const { error } = await db.from(table).insert(rows);
+  if (error) {
+    // The row is what makes the file visible; a file with no row is invisible
+    // and would leak storage, so remove them rather than leave them orphaned.
+    await db.storage.from(bucket).remove(valid);
+    return { error: `Greška pri spremanju: ${error.message}`, saved: 0 };
   }
 
   revalidateFor(kind, ownerId);
-  return { error: null, uploaded };
+  return { error: null, saved: rows.length };
 }
 
 export async function deleteImage(kind: ImageKind, imageId: string) {
